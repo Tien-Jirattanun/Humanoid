@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<robot name="hanuman" xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+    <ros2_control name="GazeboSystem" type="system">
+        <hardware>
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </hardware>
+
+        <joint name="JL_hip_y">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JL_hip_r">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JL_hip_p">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JL_knee">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JL_ankle_r">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JL_ankle_p">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JR_hip_y">
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <command_interface name="velocity" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JR_hip_r">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JR_hip_p">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JR_knee">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JR_ankle_r">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JR_ankle_p">
+            <command_interface name="velocity" />
+            <command_interface name="position">
+                <param name="min" value="-3.14"/>
+                <param name="max" value="3.14"/>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+    </ros2_control>
+
+    <gazebo>
+        <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+            <xacro:property name="description_package" value="hanuman04" />
+            <robot_sim_type>gazebo_ros2_control/GazeboSystem</robot_sim_type>
+            <parameters>$(find ${description_package})/config/controllers.yaml</parameters>
+        </plugin>
+    </gazebo>
+
+
+</robot>
