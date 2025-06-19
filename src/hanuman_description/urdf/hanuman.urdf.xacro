@@ -7,8 +7,8 @@
   <!-- <xacro:include filename="$(find ${description_package})/urdf/hanuman.ros2_control.xacro" /> -->
   <xacro:include filename="$(find ${description_package})/urdf/hanuman.ros2_gazebo.xacro"/>
   
-  <link name="world"/>
-  <xacro:humanoid parent="world"/>
+  <xacro:robot_link link_name="torso" collision_enable="true"/>
+  <xacro:humanoid parent="torso"/>
 
   <!-- <xacro:humanoid_ros2_control name="humanoid_ros2_control"/> -->
 </robot>

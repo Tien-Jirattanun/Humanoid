@@ -165,13 +165,11 @@
     </xacro:macro> 
     <!-- full body -->
     <xacro:macro name="humanoid" params="parent">
-
-        <xacro:robot_link link_name="torso" collision_enable="true"/>
-        <joint name="torso_to_world" type="fixed">
+        <!-- <joint name="torso_to_world" type="fixed">
             <parent link="${parent}"/>
             <child link="torso"/>
             <origin xyz="0 0 0.9" rpy="0 0 0"/>
-        </joint>
+        </joint> -->
         <!-- <xacro:head_assem/>
         <xacro:L_arm_assem/>
         <xacro:R_arm_assem/> -->
