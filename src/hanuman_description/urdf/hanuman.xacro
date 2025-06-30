@@ -165,11 +165,16 @@
     </xacro:macro> 
     <!-- full body -->
     <xacro:macro name="humanoid" params="parent">
-        <!-- <joint name="torso_to_world" type="fixed">
+
+        <!-- <joint name="torso_to_world" type="prismatic">
             <parent link="${parent}"/>
             <child link="torso"/>
-            <origin xyz="0 0 0.9" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+            <limit lower="-50" upper="50" velocity="0.5" effort="1000.0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
         </joint> -->
+        
+
         <!-- <xacro:head_assem/>
         <xacro:L_arm_assem/>
         <xacro:R_arm_assem/> -->

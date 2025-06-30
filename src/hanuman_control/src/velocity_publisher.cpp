@@ -17,9 +17,9 @@ using std::placeholders::_1;
 
 using namespace std::chrono_literals;
 
-double kp = 10.0;
-double ki = 0.5;
-double kd = 0.0;
+double kp = 0.9;
+double ki = 0.02;
+double kd = 0.3;
 double u_max = 3.14;
 double u_min = -3.14;
 

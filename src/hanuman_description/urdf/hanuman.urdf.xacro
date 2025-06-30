@@ -1,14 +1,21 @@
 <?xml version="1.0"?>
 <robot name="hanuman" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- Include all model properties-->
-  <xacro:property name="description_package" value="hanuman04"/>
-  <xacro:include filename="$(find ${description_package})/urdf/properties.xacro"/>
+  <xacro:property name="description_package" value="hanuman04" />
+  <xacro:include filename="$(find ${description_package})/urdf/properties.xacro" />
   <xacro:include filename="$(find ${description_package})/urdf/hanuman.xacro" />
   <!-- <xacro:include filename="$(find ${description_package})/urdf/hanuman.ros2_control.xacro" /> -->
-  <xacro:include filename="$(find ${description_package})/urdf/hanuman.ros2_gazebo.xacro"/>
-  
-  <xacro:robot_link link_name="torso" collision_enable="true"/>
-  <xacro:humanoid parent="torso"/>
+  <xacro:include filename="$(find ${description_package})/urdf/hanuman.ros2_gazebo.xacro" />
+
+  <!-- <link name="world"/> -->
+
+  <xacro:robot_link link_name="torso" collision_enable="true" />
+  <xacro:humanoid parent="torso" />
+
+  <!-- <joint name="base_to_torso" type="fixed">
+    <parent link="base_link"/>
+    <child link="torso"/>
+  </joint> -->
 
   <!-- <xacro:humanoid_ros2_control name="humanoid_ros2_control"/> -->
 </robot>

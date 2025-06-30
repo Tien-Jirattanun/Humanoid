@@ -1,8 +1,11 @@
 import os
+
 from ament_index_python.packages import get_package_share_directory
+
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 
 from launch.actions import ExecuteProcess, IncludeLaunchDescription, RegisterEventHandler
 
@@ -19,13 +22,33 @@ def generate_launch_description():
     robot_description = os.path.join(get_package_share_directory(
         package_name), "urdf", "hanuman" + ".urdf.xacro")
     robot_description_config = xacro.process_file(robot_description)
+   
+    default_world = os.path.join(
+        get_package_share_directory(package_name),
+        'worlds',
+        'empty.world'
+        )    
+    
+    world = LaunchConfiguration('world')
+
+    world_arg = DeclareLaunchArgument(
+        'world',
+        default_value=default_world,
+        description='World to load'
+        )
+
+
     
     joint_state_publisher = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
         parameters=[
-            {"robot_description": robot_description_config.toxml()}],
+            {
+                "robot_description": robot_description_config.toxml(),
+                'use_sim_time': True
+            }
+        ],
         output="screen"
     )
     
@@ -37,16 +60,16 @@ def generate_launch_description():
     )
     
     gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
-    )
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')]),
+                    launch_arguments={'gz_args': ['-r -v4 ', world], 'on_exit_shutdown': 'true'}.items()
+             )
 
-    spawn_entity = Node(
-        package='gazebo_ros', 
-        executable='spawn_entity.py',
-        arguments=['-topic', 'robot_description','-entity', 'robot'],
-        output='screen'
-    )
+    spawn_entity = Node(package='ros_gz_sim', executable='create',
+                        arguments=['-topic', 'robot_description',
+                                   '-name', 'my_bot',
+                                   '-z', '0.5'],
+                        output='screen') 
    
     joint_state_broadcaster = Node(
         package="controller_manager",
@@ -62,7 +85,8 @@ def generate_launch_description():
 
     return LaunchDescription([
         joint_state_publisher,
-        # rviz2,
+        # rviz2, 
+        world_arg,
         gazebo,
         spawn_entity,
         joint_state_broadcaster,
