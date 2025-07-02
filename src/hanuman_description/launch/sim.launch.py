@@ -1,17 +1,14 @@
-import os
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.event_handlers import OnProcessExit
 from launch.substitutions import LaunchConfiguration
-
-from launch.actions import ExecuteProcess, IncludeLaunchDescription, RegisterEventHandler
-
 from launch_ros.actions import Node
-import xacro
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import IncludeLaunchDescription
 
+import os
+from ament_index_python.packages import get_package_share_directory
+import xacro
 
 def generate_launch_description():
     package_name = "hanuman04"
@@ -82,6 +79,16 @@ def generate_launch_description():
         executable="spawner",
         arguments=["velocity_controller", "--controller-manager", "/controller_manager"],
     )
+    
+    start_controllers = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=spawn_entity,
+            on_exit=[
+                joint_state_broadcaster,
+                velocity_controller,
+            ]
+        )
+    )
 
     return LaunchDescription([
         joint_state_publisher,
@@ -89,6 +96,6 @@ def generate_launch_description():
         world_arg,
         gazebo,
         spawn_entity,
-        joint_state_broadcaster,
-        velocity_controller,
+        start_controllers,
+        
     ])

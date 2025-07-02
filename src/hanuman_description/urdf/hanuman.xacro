@@ -1,48 +1,51 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-<!-- Propoties -->
+    <!-- Propoties -->
     <!-- Inertia -->
     <xacro:macro name="link_inertia" params="link_name">
         <inertial>
-            <origin xyz="${LINK_INERTIAL[link_name]['com']}"/>
-            <mass value="${LINK_INERTIAL[link_name]['mass']}"/>
+            <origin xyz="${LINK_INERTIAL[link_name]['com']}" />
+            <mass value="${LINK_INERTIAL[link_name]['mass']}" />
             <inertia
-                ixx = "${LINK_INERTIAL[link_name]['inertia']['xx']}"
-                ixy = "${LINK_INERTIAL[link_name]['inertia']['xy']}"
-                ixz = "${LINK_INERTIAL[link_name]['inertia']['xz']}"
-                iyy = "${LINK_INERTIAL[link_name]['inertia']['yy']}"
-                iyz = "${LINK_INERTIAL[link_name]['inertia']['yz']}"
-                izz = "${LINK_INERTIAL[link_name]['inertia']['zz']}"/>
+                ixx="${LINK_INERTIAL[link_name]['inertia']['xx']}"
+                ixy="${LINK_INERTIAL[link_name]['inertia']['xy']}"
+                ixz="${LINK_INERTIAL[link_name]['inertia']['xz']}"
+                iyy="${LINK_INERTIAL[link_name]['inertia']['yy']}"
+                iyz="${LINK_INERTIAL[link_name]['inertia']['yz']}"
+                izz="${LINK_INERTIAL[link_name]['inertia']['zz']}" />
         </inertial>
     </xacro:macro>
     <!-- Visual -->
     <xacro:macro name="link_visual" params="link_name">
         <visual>
-            <origin xyz="${LINK_VISUAL[link_name]['position']}" rpy="${LINK_VISUAL[link_name]['orientation']}"/>
+            <origin xyz="${LINK_VISUAL[link_name]['position']}"
+                rpy="${LINK_VISUAL[link_name]['orientation']}" />
             <geometry>
-                <mesh filename="file://$(find ${description_package})/meshes/${link_name}.obj"/>
+                <mesh filename="file://$(find ${description_package})/meshes/${link_name}.obj" />
             </geometry>
         </visual>
     </xacro:macro>
     <!-- Collision -->
     <xacro:macro name="link_collision" params="link_name">
         <collision name="${link_name}">
-            <origin xyz="${LINK_VISUAL[link_name]['position']}" rpy="${LINK_VISUAL[link_name]['orientation']}"/>
+            <origin xyz="${LINK_VISUAL[link_name]['position']}"
+                rpy="${LINK_VISUAL[link_name]['orientation']}" />
             <geometry>
-                <mesh filename="file://$(find ${description_package})/meshes/${link_name}_collision.obj"/>
+                <mesh
+                    filename="file://$(find ${description_package})/meshes/${link_name}_collision.obj" />
             </geometry>
         </collision>
     </xacro:macro>
     <!-- Link -->
     <xacro:macro name="robot_link" params="link_name collision_enable">
         <link name="${link_name}">
-            <xacro:link_inertia link_name="${link_name}"/>
-            <xacro:link_visual link_name="${link_name}"/>
-            
+            <xacro:link_inertia link_name="${link_name}" />
+            <xacro:link_visual link_name="${link_name}" />
+
             <!-- Enable collision only for specific links -->
             <xacro:if value="${collision_enable}">
-                <xacro:link_collision link_name="${link_name}"/>
+                <xacro:link_collision link_name="${link_name}" />
             </xacro:if>
         </link>
     </xacro:macro>
@@ -50,16 +53,16 @@
     <!-- Joint -->
     <xacro:macro name="robot_joint" params="joint_name">
         <joint name="${joint_name}" type="${JOINT[joint_name]['types']}">
-            <parent link="${JOINT[joint_name]['parent']}"/>
-            <child link="${JOINT[joint_name]['child']}"/>
-            <origin xyz="${JOINT[joint_name]['position']}" rpy="${JOINT[joint_name]['orientation']}"/> 
-            <dynamics damping="0.5"/>
-            <axis xyz="0 0 1"/>
-            <limit 
-                lower="${JOINT[joint_name]['lower']}" 
-                upper="${JOINT[joint_name]['upper']}" 
-                velocity="${JOINT[joint_name]['velocity']}" 
-                effort="${JOINT[joint_name]['effort']}"/>           
+            <parent link="${JOINT[joint_name]['parent']}" />
+            <child link="${JOINT[joint_name]['child']}" />
+            <origin xyz="${JOINT[joint_name]['position']}" rpy="${JOINT[joint_name]['orientation']}" />
+            <dynamics damping="0.5" />
+            <axis xyz="0 0 1" />
+            <limit
+                lower="${JOINT[joint_name]['lower']}"
+                upper="${JOINT[joint_name]['upper']}"
+                velocity="${JOINT[joint_name]['velocity']}"
+                effort="${JOINT[joint_name]['effort']}" />
         </joint>
     </xacro:macro>
     <!-- joint actuator -->
@@ -68,131 +71,209 @@
             <actuator name="${joint_name}_motor">
                 <mechanicalReduction>1.0</mechanicalReduction>
             </actuator>
-            <joint name="${joint_name}"/>
-        </transmission>    
+            <joint name="${joint_name}" />
+        </transmission>
     </xacro:macro>
 
-<!--Assembly -->
+    <!--Assembly -->
     <!-- head -->
     <xacro:macro name="head_assem" params="">
-        <xacro:robot_joint joint_name = "J_neck"/>
-        <xacro:robot_actuator joint_name = "J_neck"/>
-        <xacro:robot_link link_name="neck" collision_enable="false"/>
+        <xacro:robot_joint joint_name="J_neck" />
+        <xacro:robot_actuator joint_name="J_neck" />
+        <xacro:robot_link link_name="neck" collision_enable="false" />
 
-        <xacro:robot_joint joint_name = "J_cam"/>
-         <xacro:robot_actuator joint_name = "J_cam"/>
-        <xacro:robot_link link_name="cam" collision_enable="true"/>        
+        <xacro:robot_joint joint_name="J_cam" />
+        <xacro:robot_actuator joint_name="J_cam" />
+        <xacro:robot_link link_name="cam" collision_enable="true" />
     </xacro:macro>
     <!-- left arm -->
     <xacro:macro name="L_arm_assem" params="">
-        <xacro:robot_joint joint_name = "JL_shoulder_p"/>
-        <xacro:robot_actuator joint_name = "JL_shoulder_p"/>
-        <xacro:robot_link link_name="L_arm_connector" collision_enable="false"/>
+        <xacro:robot_joint joint_name="JL_shoulder_p" />
+        <xacro:robot_actuator joint_name="JL_shoulder_p" />
+        <xacro:robot_link link_name="L_arm_connector" collision_enable="false" />
 
-        <xacro:robot_joint joint_name = "JL_shoulder_r"/> 
-        <xacro:robot_actuator joint_name = "JL_shoulder_r"/>
-        <xacro:robot_link link_name="L_upper_arm" collision_enable="false"/>
+        <xacro:robot_joint joint_name="JL_shoulder_r" />
+        <xacro:robot_actuator joint_name="JL_shoulder_r" />
+        <xacro:robot_link link_name="L_upper_arm" collision_enable="false" />
 
-        <xacro:robot_joint joint_name = "JL_elbow"/> 
-        <xacro:robot_actuator joint_name = "JL_elbow"/>
-        <xacro:robot_link link_name="L_lower_arm" collision_enable="true"/>    
-    </xacro:macro> 
+        <xacro:robot_joint joint_name="JL_elbow" />
+        <xacro:robot_actuator joint_name="JL_elbow" />
+        <xacro:robot_link link_name="L_lower_arm" collision_enable="true" />
+    </xacro:macro>
     <!-- right arm -->
     <xacro:macro name="R_arm_assem" params="">
-        <xacro:robot_joint joint_name = "JR_shoulder_p"/>
-        <xacro:robot_actuator joint_name = "JR_shoulder_p"/>
-        <xacro:robot_link link_name="R_arm_connector" collision_enable="false"/>
+        <xacro:robot_joint joint_name="JR_shoulder_p" />
+        <xacro:robot_actuator joint_name="JR_shoulder_p" />
+        <xacro:robot_link link_name="R_arm_connector" collision_enable="false" />
 
-        <xacro:robot_joint joint_name = "JR_shoulder_r"/> 
-        <xacro:robot_actuator joint_name = "JR_shoulder_r"/>
-        <xacro:robot_link link_name="R_upper_arm" collision_enable="false"/>
+        <xacro:robot_joint joint_name="JR_shoulder_r" />
+        <xacro:robot_actuator joint_name="JR_shoulder_r" />
+        <xacro:robot_link link_name="R_upper_arm" collision_enable="false" />
 
-        <xacro:robot_joint joint_name = "JR_elbow"/> 
-        <xacro:robot_actuator joint_name = "JR_elbow"/>
-        <xacro:robot_link link_name="R_lower_arm" collision_enable="true"/>    
-    </xacro:macro> 
+        <xacro:robot_joint joint_name="JR_elbow" />
+        <xacro:robot_actuator joint_name="JR_elbow" />
+        <xacro:robot_link link_name="R_lower_arm" collision_enable="true" />
+    </xacro:macro>
     <!-- left leg -->
     <xacro:macro name="L_leg_assem" params="">
-        <xacro:robot_joint joint_name = "JL_hip_y"/>
-        <xacro:robot_actuator joint_name = "JL_hip_y"/>
-        <xacro:robot_link link_name="L_hip_connector" collision_enable="false"/>
+        <xacro:robot_joint joint_name="JL_hip_y" />
+        <xacro:robot_actuator joint_name="JL_hip_y" />
+        <xacro:robot_link link_name="L_hip_connector" collision_enable="false" />
 
-        <xacro:robot_joint joint_name = "JL_hip_r"/> 
-        <xacro:robot_actuator joint_name = "JL_hip_r"/>
-        <xacro:robot_link link_name="L_hip" collision_enable="true"/>
+        <!-- <xacro:robot_link link_name="L_hip" collision_enable="true" /> -->
+        <xacro:robot_joint joint_name="JL_hip_r" />
+        <xacro:robot_actuator joint_name="JL_hip_r" />
+        <link name="L_hip">
+            <xacro:link_inertia link_name="L_hip" />
+            <xacro:link_visual link_name="L_hip" />
+            <collision name="L_hip_collision_collision_box">
+                <origin xyz="0.017375 0.003927 -0.002961" rpy="0.000000 -0.082542 -1.570796" />
+                <geometry>
+                    <box size="0.055385 0.063750 0.105031" />
+                </geometry>
+            </collision>
+        </link>
 
-        <xacro:robot_joint joint_name = "JL_hip_p"/> 
-        <xacro:robot_actuator joint_name = "JL_hip_p"/>
-        <xacro:robot_link link_name="L_thigh" collision_enable="true"/>
+        <!-- <xacro:robot_link link_name="L_thigh" collision_enable="true" /> -->
+        <xacro:robot_joint joint_name="JL_hip_p" />
+        <xacro:robot_actuator joint_name="JL_hip_p" />
+        <link name="L_thigh">
+            <xacro:link_inertia link_name="L_thigh" />
+            <xacro:link_visual link_name="L_thigh" />
+            <collision name="L_thigh_collision_collision_box">
+                <origin xyz="0.142125 -0.000000 -0.000100" rpy="1.570796 -0.000000 -1.570796" />
+                <geometry>
+                    <box size="0.034000 0.059800 0.064250" />
+                </geometry>
+            </collision>
+        </link>
 
-        <xacro:robot_joint joint_name = "JL_knee"/>
-        <xacro:robot_actuator joint_name = "JL_knee"/>
-        <xacro:robot_link link_name="L_leg" collision_enable="false"/>
+        <xacro:robot_joint joint_name="JL_knee" />
+        <xacro:robot_actuator joint_name="JL_knee" />
+        <xacro:robot_link link_name="L_leg" collision_enable="false" />
 
-        <xacro:robot_joint joint_name = "JL_ankle_p"/> 
-        <xacro:robot_actuator joint_name = "JL_ankle_p"/>
-        <xacro:robot_link link_name="L_ankle" collision_enable="true"/>
+        <!-- <xacro:robot_link link_name="L_ankle" collision_enable="true" /> -->
+        <xacro:robot_joint joint_name="JL_ankle_p" />
+        <xacro:robot_actuator joint_name="JL_ankle_p" />
+        <link name="L_ankle">
+            <xacro:link_inertia link_name="L_ankle" />
+            <xacro:link_visual link_name="L_ankle" />
+            <collision name="L_ankle_collision_collision_box">
+                <origin xyz="-0.017375 -0.020539 0.003927" rpy="0.000000 1.488255 -1.570796" />
+                <geometry>
+                    <box size="0.055385 0.063750 0.105030" />
+                </geometry>
+            </collision>
+        </link>
 
-        <xacro:robot_joint joint_name = "JL_ankle_r"/> 
-        <xacro:robot_actuator joint_name = "JL_ankle_r"/>
-        <xacro:robot_link link_name="L_foot" collision_enable="true"/>     
-    </xacro:macro> 
+        <!-- <xacro:robot_link link_name="L_foot" collision_enable="true" /> -->
+        <xacro:robot_joint joint_name="JL_ankle_r" />
+        <xacro:robot_actuator joint_name="JL_ankle_r" />
+        <link name="L_foot">
+            <xacro:link_inertia link_name="L_foot" />
+            <xacro:link_visual link_name="L_foot" />
+            <collision name="L_foot_collision_collision_box">
+                <origin xyz="0.034500 0.018000 0.036000" rpy="3.141593 -0.000000 -3.141593" />
+                <geometry>
+                    <box size="0.029000 0.094000 0.167000" />
+                </geometry>
+            </collision>
+        </link>
+
+    </xacro:macro>
     <!-- right leg -->
     <xacro:macro name="R_leg_assem" params="">
-        <xacro:robot_joint joint_name = "JR_hip_y"/>
-        <xacro:robot_actuator joint_name = "JR_hip_y"/>
-        <xacro:robot_link link_name="R_hip_connector" collision_enable="false"/>
+        <xacro:robot_joint joint_name="JR_hip_y" />
+        <xacro:robot_actuator joint_name="JR_hip_y" />
+        <xacro:robot_link link_name="R_hip_connector" collision_enable="false" />
 
-        <xacro:robot_joint joint_name = "JR_hip_r"/> 
-        <xacro:robot_actuator joint_name = "JR_hip_r"/>
-        <xacro:robot_link link_name="R_hip" collision_enable="true"/>
+        <!-- <xacro:robot_link link_name="R_hip" collision_enable="true"/> -->
+        <xacro:robot_joint joint_name="JR_hip_r" />
+        <xacro:robot_actuator joint_name="JR_hip_r" />
+        <link name="R_hip">
+            <xacro:link_inertia link_name="R_hip" />
+            <xacro:link_visual link_name="R_hip" />
 
-        <xacro:robot_joint joint_name = "JR_hip_p"/> 
-        <xacro:robot_actuator joint_name = "JR_hip_p"/>
-        <xacro:robot_link link_name="R_thigh" collision_enable="true"/>
+            <collision name="R_hip_collision_collision_box">
+                <origin xyz="0.017375 0.003927 -0.002961" rpy="0.000000 -0.082542 -1.570796" />
+                <geometry>
+                    <box size="0.055385 0.063750 0.105031" />
+                </geometry>
+            </collision>
 
-        <xacro:robot_joint joint_name = "JR_knee"/>
-        <xacro:robot_actuator joint_name = "JR_knee"/>
-        <xacro:robot_link link_name="R_leg" collision_enable="false"/>
+        </link>
 
-        <xacro:robot_joint joint_name = "JR_ankle_p"/> 
-        <xacro:robot_actuator joint_name = "JR_ankle_p"/>
-        <xacro:robot_link link_name="R_ankle" collision_enable="true"/>
+        <!-- <xacro:robot_link link_name="R_thigh" collision_enable="true" /> -->
+        <xacro:robot_joint joint_name="JR_hip_p" />
+        <xacro:robot_actuator joint_name="JR_hip_p" />
+        <link name="R_thigh">
+            <xacro:link_inertia link_name="R_thigh" />
+            <xacro:link_visual link_name="R_thigh" />
 
-        <xacro:robot_joint joint_name = "JR_ankle_r"/>
-        <xacro:robot_actuator joint_name = "JR_ankle_r"/>
-        <xacro:robot_link link_name="R_foot" collision_enable="true"/>   
-    </xacro:macro> 
+            <collision name="R_thigh_collision_collision_box">
+                <origin xyz="0.142125 -0.000000 -0.000100" rpy="1.570796 -0.000000 -1.570796" />
+                <geometry>
+                    <box size="0.034000 0.059800 0.064250" />
+                </geometry>
+            </collision>
+        </link>
+
+        <xacro:robot_joint joint_name="JR_knee" />
+        <xacro:robot_actuator joint_name="JR_knee" />
+        <xacro:robot_link link_name="R_leg" collision_enable="false" />
+
+        <!-- <xacro:robot_link link_name="R_ankle" collision_enable="true" /> -->
+        <xacro:robot_joint joint_name="JR_ankle_p" />
+        <xacro:robot_actuator joint_name="JR_ankle_p" />
+        <link name="R_ankle">
+            <xacro:link_inertia link_name="R_ankle" />
+            <xacro:link_visual link_name="R_ankle" />
+
+            <collision name="R_ankle_collision_collision_box">
+                <origin xyz="-0.017375 -0.020539 0.003927" rpy="0.000000 1.488255 -1.570796" />
+                <geometry>
+                    <box size="0.055385 0.063750 0.105030" />
+                </geometry>
+            </collision>
+
+        </link>
+
+        <!-- <xacro:robot_link link_name="R_foot" collision_enable="true" /> -->
+        <xacro:robot_joint joint_name="JR_ankle_r" />
+        <xacro:robot_actuator joint_name="JR_ankle_r" />
+        <link name="R_foot">
+            <xacro:link_inertia link_name="R_foot" />
+            <xacro:link_visual link_name="R_foot" />
+
+            <collision name="R_foot_collision_collision_box">
+                <origin xyz="0.034500 -0.018000 0.036000" rpy="3.141593 -0.000000 -3.141593" />
+                <geometry>
+                    <box size="0.029000 0.094000 0.167000" />
+                </geometry>
+            </collision>
+        </link>
+    </xacro:macro>
     <!-- full body -->
     <xacro:macro name="humanoid" params="parent">
-
-        <!-- <joint name="torso_to_world" type="prismatic">
-            <parent link="${parent}"/>
-            <child link="torso"/>
-            <axis xyz="0 0 1"/>
-            <limit lower="-50" upper="50" velocity="0.5" effort="1000.0"/>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-        </joint> -->
-        
 
         <!-- <xacro:head_assem/>
         <xacro:L_arm_assem/>
         <xacro:R_arm_assem/> -->
 
-        <xacro:L_leg_assem/>
-        <link name="L_foot_contact"/>
+        <xacro:L_leg_assem />
+        <link name="L_foot_contact" />
         <joint name="L_foot_contact_offset" type="fixed">
-            <parent link="L_foot"/>
-            <child link="L_foot_contact"/>
-            <origin xyz="0.049 0 0.0235" rpy="0 -1.5705 0"/>
+            <parent link="L_foot" />
+            <child link="L_foot_contact" />
+            <origin xyz="0.049 0 0.0235" rpy="0 -1.5705 0" />
         </joint>
 
-        <xacro:R_leg_assem/>
-        <link name="R_foot_contact"/>
+        <xacro:R_leg_assem />
+        <link name="R_foot_contact" />
         <joint name="R_foot_contact_offset" type="fixed">
-            <parent link="R_foot"/>
-            <child link="R_foot_contact"/>
-            <origin xyz="0.049 0 0.0235" rpy="0 -1.5705 0"/>
+            <parent link="R_foot" />
+            <child link="R_foot_contact" />
+            <origin xyz="0.049 0 0.0235" rpy="0 -1.5705 0" />
         </joint>
 
     </xacro:macro>
