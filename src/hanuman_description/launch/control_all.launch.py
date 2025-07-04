@@ -100,6 +100,13 @@ def generate_launch_description():
             ]
         )
     )
+    
+    velocity_publisher_node = Node(
+        package="hanuman_control",
+        executable="hanuman_control",
+        name="velocity_publisher",
+        output="screen"
+    )
 
     return LaunchDescription([
         joint_state_publisher,
@@ -108,5 +115,5 @@ def generate_launch_description():
         gazebo,
         spawn_entity,
         start_controllers,
-        
+        velocity_publisher_node,        
     ])

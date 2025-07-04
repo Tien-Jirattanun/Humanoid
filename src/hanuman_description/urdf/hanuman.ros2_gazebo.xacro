@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <robot name="hanuman" xmlns:xacro="http://ros.org/wiki/xacro">
 
-
     <ros2_control name="GazeboSystem" type="system">
         <hardware>
             <plugin>gz_ros2_control/GazeboSimSystem</plugin>
@@ -106,7 +105,7 @@
     </ros2_control>
 
     <gazebo>
-        <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
             <xacro:property name="description_package" value="hanuman04" />
             <!-- <robot_sim_type>gazebo_ros2_control/GazeboSystem</robot_sim_type> -->
             <parameters>$(find ${description_package})/config/controllers.yaml</parameters>
