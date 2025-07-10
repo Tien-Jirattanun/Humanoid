@@ -17,7 +17,7 @@ using std::placeholders::_1;
 
 using namespace std::chrono_literals;
 
-double kp = 0.05;
+double kp = 0.5;
 double ki = 0.0;
 double kd = 0.0;
 double u_max = 3.14;
@@ -65,14 +65,14 @@ private:
 		hanuman_velocity_[0] = JL_hip_r.PIDControl(hanuman_ref_position_[0], hanuman_position_[0]);
 		hanuman_velocity_[1] = JL_hip_p.PIDControl(hanuman_ref_position_[1], hanuman_position_[1]);
 		hanuman_velocity_[2] = JL_knee.PIDControl(hanuman_ref_position_[2], hanuman_position_[2]);
-		hanuman_velocity_[3] = -1 * JL_ankle_r.PIDControl(hanuman_ref_position_[3], hanuman_position_[3]);
-		hanuman_velocity_[4] = -1 * JL_hip_y.PIDControl(hanuman_ref_position_[4], hanuman_position_[4]);
+		hanuman_velocity_[3] = JL_ankle_r.PIDControl(hanuman_ref_position_[3], hanuman_position_[3]);
+		hanuman_velocity_[4] = JL_hip_y.PIDControl(hanuman_ref_position_[4], hanuman_position_[4]);
 		hanuman_velocity_[5] = JL_ankle_p.PIDControl(hanuman_ref_position_[5], hanuman_position_[5]);
 		hanuman_velocity_[6] = JR_hip_r.PIDControl(hanuman_ref_position_[6], hanuman_position_[6]);
-		hanuman_velocity_[7] = -1 * JR_hip_y.PIDControl(hanuman_ref_position_[7], hanuman_position_[7]);
+		hanuman_velocity_[7] = JR_hip_y.PIDControl(hanuman_ref_position_[7], hanuman_position_[7]);
 		hanuman_velocity_[8] = JR_hip_p.PIDControl(hanuman_ref_position_[8], hanuman_position_[8]);
 		hanuman_velocity_[9] = JR_knee.PIDControl(hanuman_ref_position_[9], hanuman_position_[9]);
-		hanuman_velocity_[10] = -1 * JR_ankle_r.PIDControl(hanuman_ref_position_[10], hanuman_position_[10]);
+		hanuman_velocity_[10] = JR_ankle_r.PIDControl(hanuman_ref_position_[10], hanuman_position_[10]);
 		hanuman_velocity_[11] = JR_ankle_p.PIDControl(hanuman_ref_position_[11], hanuman_position_[11]);
 
 		velocity_message.data = hanuman_velocity_;

@@ -1,26 +1,12 @@
 {
     "python.autoComplete.extraPaths": [
-        "/home/tien/Documents/Github/Humanoid/install/hanuman04/local/lib/python3.10/dist-packages",
-        "/home/tien/Documents/Github/HanumanHumanoid/install/hanuman04/local/lib/python3.10/dist-packages",
-        "/home/tien/microros_ws/install/micro_ros_msgs/local/lib/python3.10/dist-packages",
-        "/home/tien/Documents/Github/FIBOX_ROS/ros_ws/install/abu_vision/local/lib/python3.10/dist-packages",
-        "/home/tien/Documents/Github/FIBOX_ROS/ros_ws/install/abu_control/local/lib/python3.10/dist-packages",
-        "/home/tien/Documents/Github/FIBOX_ROS/ros_ws/install/abu_bringup/local/lib/python3.10/dist-packages",
+        "/home/tien/Documents/GitHub/Humanoid/install/hanuman04/local/lib/python3.10/dist-packages",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
     "python.analysis.extraPaths": [
-        "/home/tien/Documents/Github/Humanoid/install/hanuman04/local/lib/python3.10/dist-packages",
-        "/home/tien/Documents/Github/HanumanHumanoid/install/hanuman04/local/lib/python3.10/dist-packages",
-        "/home/tien/microros_ws/install/micro_ros_msgs/local/lib/python3.10/dist-packages",
-        "/home/tien/Documents/Github/FIBOX_ROS/ros_ws/install/abu_vision/local/lib/python3.10/dist-packages",
-        "/home/tien/Documents/Github/FIBOX_ROS/ros_ws/install/abu_control/local/lib/python3.10/dist-packages",
-        "/home/tien/Documents/Github/FIBOX_ROS/ros_ws/install/abu_bringup/local/lib/python3.10/dist-packages",
+        "/home/tien/Documents/GitHub/Humanoid/install/hanuman04/local/lib/python3.10/dist-packages",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
-    ],
-    "files.associations": {
-        "functional": "cpp",
-        "chrono": "cpp"
-    }
+    ]
 }

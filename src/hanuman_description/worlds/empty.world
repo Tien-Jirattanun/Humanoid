@@ -4,6 +4,9 @@
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1.0</real_time_factor>
     </physics>
+
+    <gravity>0 0 -0.1</gravity>
+
     <plugin
       filename="gz-sim-physics-system"
       name="gz::sim::systems::Physics">

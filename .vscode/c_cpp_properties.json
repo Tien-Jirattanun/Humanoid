@@ -1,24 +1,21 @@
 {
-    "configurations": [
-        {
-            "browse": {
-                "databaseFilename": "${default}",
-                "limitSymbolsToIncludedHeaders": false
-            },
-            "includePath": [
-                "/home/tien/microros_ws/install/micro_ros_agent/include/**",
-                "/home/tien/microros_ws/install/micro_ros_msgs/include/**",
-                "/opt/ros/humble/include/**",
-                "/home/tien/Documents/Github/Humanoid/src/hanuman_control/include/**",
-                "/usr/include/**",
-                "${workspaceFolder}/src/hanuman_control/include/hanuman_control/position_control"
-            ],
-            "name": "ROS",
-            "intelliSenseMode": "gcc-x64",
-            "compilerPath": "/usr/bin/gcc",
-            "cStandard": "gnu11",
-            "cppStandard": "c++14"
-        }
-    ],
-    "version": 4
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/opt/ros/humble/include/**",
+        "/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ros2",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++17"
+    }
+  ],
+  "version": 4
 }

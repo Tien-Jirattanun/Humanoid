@@ -7,9 +7,11 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
@@ -28,7 +30,7 @@ endif()
 # Include directories
 include_directories(
   include
-  include/hanuman_control/position_control
+  include/hanuman_control
 )
 
 # add executable
@@ -47,5 +49,14 @@ ament_target_dependencies(
 install(TARGETS
   hanuman_control
   DESTINATION lib/${PROJECT_NAME})
+
+# py module
+ament_python_install_package(${PROJECT_NAME})
+
+install(PROGRAMS
+  scripts/trajectory_publisher.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 
 ament_package()

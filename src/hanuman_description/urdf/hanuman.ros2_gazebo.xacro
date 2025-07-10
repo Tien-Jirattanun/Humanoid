@@ -2,6 +2,7 @@
 <robot name="hanuman" xmlns:xacro="http://ros.org/wiki/xacro">
 
     <ros2_control name="GazeboSystem" type="system">
+
         <hardware>
             <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
