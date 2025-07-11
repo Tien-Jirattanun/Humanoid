@@ -2,28 +2,27 @@
 
 double PositionControl::PIDControl(double setpoint, double current_position) {
     double error = setpoint - current_position;
-    double delta_u = 0.0;
 
     // PID velocity form
-    delta_u = kp_ * (error - e_prev_one_) +   
-              ki_ * error +                    
-              kd_ * (error - 2 * e_prev_one_ + e_prev_two_);  
+    double delta_u = kp_ * (error - e_prev_one_) +
+                     ki_ * error +
+                     kd_ * (error - 2 * e_prev_one_ + e_prev_two_);
 
-    // Check if the control output is within the limits
+    double u_new = u_prev_;
+
+    // Only update if not saturated
     if (!((u_prev_ >= u_max_ && delta_u > 0) || (u_prev_ <= u_min_ && delta_u < 0))) {
-        delta_u = u_prev_ + delta_u;  
-    } else {
-        delta_u = u_prev_;  
+        u_new += delta_u;
     }
 
-    // clamping 
-    delta_u = (delta_u > u_max_) ? u_max_ : delta_u;
-    delta_u = (delta_u < u_min_) ? u_min_ : delta_u;
+    // Clamp output
+    if (u_new > u_max_) u_new = u_max_;
+    if (u_new < u_min_) u_new = u_min_;
 
-    // update previous values
+    // Update state
     e_prev_two_ = e_prev_one_;
     e_prev_one_ = error;
-    u_prev_ = delta_u;
+    u_prev_ = u_new;
 
-    return delta_u;
+    return u_new;
 }
