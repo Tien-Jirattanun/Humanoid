@@ -1,14 +1,14 @@
-#ifndef POSITION_CONTROL_HPP
-#define POSITION_CONTROL_HPP
+#ifndef PID_CONTROL_HPP
+#define PID_CONTROL_HPP
 
-class PositionControl 
+class PIDControl 
 {
 public:
-    PositionControl(double kp, double ki, double kd, double u_max, double u_min) 
+    PIDControl(double kp, double ki, double kd, double u_max, double u_min) 
     : kp_(kp), ki_(ki), kd_(kd), u_max_(u_max), u_min_(u_min),
       e_prev_one_(0.0f), e_prev_two_(0.0f), u_prev_(0.0f) {}
 
-    double PIDControl(double setpoint, double current_position);
+    double PIDControlFunction(double setpoint, double current_position);
 
 private:
     double kp_;        // Proportional gain

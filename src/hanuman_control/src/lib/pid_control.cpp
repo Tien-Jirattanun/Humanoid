@@ -1,6 +1,6 @@
-#include "position_control.hpp"
+#include "pid_control.hpp"
 
-double PositionControl::PIDControl(double setpoint, double current_position) {
+double PIDControl::PIDControlFunction(double setpoint, double current_position) {
     double error = setpoint - current_position;
 
     // PID velocity form

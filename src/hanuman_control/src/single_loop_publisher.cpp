@@ -13,7 +13,7 @@
 using std::placeholders::_1;
 
 // lib include
-#include "position_control.hpp"
+#include "pid_control.hpp"
 
 using namespace std::chrono_literals;
 
@@ -23,18 +23,18 @@ double kd = 0.2;
 double u_max = 3.14;
 double u_min = -3.14;
 
-PositionControl JL_hip_r(kp, ki, kd, u_max, u_min);
-PositionControl JL_hip_p(kp, ki, kd, u_max, u_min);
-PositionControl JL_knee(kp, ki, kd, u_max, u_min);
-PositionControl JL_ankle_r(kp, ki, kd, u_max, u_min);
-PositionControl JL_hip_y(kp, ki, kd, u_max, u_min);
-PositionControl JL_ankle_p(kp, ki, kd, u_max, u_min);
-PositionControl JR_hip_r(kp, ki, kd, u_max, u_min);
-PositionControl JR_hip_y(kp, ki, kd, u_max, u_min);
-PositionControl JR_hip_p(kp, ki, kd, u_max, u_min);
-PositionControl JR_knee(kp, ki, kd, u_max, u_min);
-PositionControl JR_ankle_r(kp, ki, kd, u_max, u_min);
-PositionControl JR_ankle_p(kp, ki, kd, u_max, u_min);
+PIDControl JL_hip_r(kp, ki, kd, u_max, u_min);
+PIDControl JL_hip_p(kp, ki, kd, u_max, u_min);
+PIDControl JL_knee(kp, ki, kd, u_max, u_min);
+PIDControl JL_ankle_r(kp, ki, kd, u_max, u_min);
+PIDControl JL_hip_y(kp, ki, kd, u_max, u_min);
+PIDControl JL_ankle_p(kp, ki, kd, u_max, u_min);
+PIDControl JR_hip_r(kp, ki, kd, u_max, u_min);
+PIDControl JR_hip_y(kp, ki, kd, u_max, u_min);
+PIDControl JR_hip_p(kp, ki, kd, u_max, u_min);
+PIDControl JR_knee(kp, ki, kd, u_max, u_min);
+PIDControl JR_ankle_r(kp, ki, kd, u_max, u_min);
+PIDControl JR_ankle_p(kp, ki, kd, u_max, u_min);
 
 class VelocityPublisher : public rclcpp::Node
 {
@@ -62,18 +62,18 @@ private:
 	{
 		auto velocity_message = std_msgs::msg::Float64MultiArray();
 
-		hanuman_velocity_[0] = JL_hip_r.PIDControl(hanuman_ref_position_[0], hanuman_position_[0]);
-		hanuman_velocity_[1] = JL_hip_p.PIDControl(hanuman_ref_position_[1], hanuman_position_[1]);
-		hanuman_velocity_[2] = JL_knee.PIDControl(hanuman_ref_position_[2], hanuman_position_[2]);
-		hanuman_velocity_[3] = JL_ankle_r.PIDControl(hanuman_ref_position_[3], hanuman_position_[3]);
-		hanuman_velocity_[4] = JL_hip_y.PIDControl(hanuman_ref_position_[4], hanuman_position_[4]);
-		hanuman_velocity_[5] = JL_ankle_p.PIDControl(hanuman_ref_position_[5], hanuman_position_[5]);
-		hanuman_velocity_[6] = JR_hip_r.PIDControl(hanuman_ref_position_[6], hanuman_position_[6]);
-		hanuman_velocity_[7] = JR_hip_y.PIDControl(hanuman_ref_position_[7], hanuman_position_[7]);
-		hanuman_velocity_[8] = JR_hip_p.PIDControl(hanuman_ref_position_[8], hanuman_position_[8]);
-		hanuman_velocity_[9] = JR_knee.PIDControl(hanuman_ref_position_[9], hanuman_position_[9]);
-		hanuman_velocity_[10] = JR_ankle_r.PIDControl(hanuman_ref_position_[10], hanuman_position_[10]);
-		hanuman_velocity_[11] = JR_ankle_p.PIDControl(hanuman_ref_position_[11], hanuman_position_[11]);
+		hanuman_velocity_[0] = JL_hip_r.PIDControlFunction(hanuman_ref_position_[0], hanuman_position_[0]);
+		hanuman_velocity_[1] = JL_hip_p.PIDControlFunction(hanuman_ref_position_[1], hanuman_position_[1]);
+		hanuman_velocity_[2] = JL_knee.PIDControlFunction(hanuman_ref_position_[2], hanuman_position_[2]);
+		hanuman_velocity_[3] = JL_ankle_r.PIDControlFunction(hanuman_ref_position_[3], hanuman_position_[3]);
+		hanuman_velocity_[4] = JL_hip_y.PIDControlFunction(hanuman_ref_position_[4], hanuman_position_[4]);
+		hanuman_velocity_[5] = JL_ankle_p.PIDControlFunction(hanuman_ref_position_[5], hanuman_position_[5]);
+		hanuman_velocity_[6] = JR_hip_r.PIDControlFunction(hanuman_ref_position_[6], hanuman_position_[6]);
+		hanuman_velocity_[7] = JR_hip_y.PIDControlFunction(hanuman_ref_position_[7], hanuman_position_[7]);
+		hanuman_velocity_[8] = JR_hip_p.PIDControlFunction(hanuman_ref_position_[8], hanuman_position_[8]);
+		hanuman_velocity_[9] = JR_knee.PIDControlFunction(hanuman_ref_position_[9], hanuman_position_[9]);
+		hanuman_velocity_[10] = JR_ankle_r.PIDControlFunction(hanuman_ref_position_[10], hanuman_position_[10]);
+		hanuman_velocity_[11] = JR_ankle_p.PIDControlFunction(hanuman_ref_position_[11], hanuman_position_[11]);
 
 		velocity_message.data = hanuman_velocity_;
 		velocity_publisher_->publish(velocity_message);
