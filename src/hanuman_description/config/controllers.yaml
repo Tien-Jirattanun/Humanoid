@@ -9,19 +9,19 @@ controller_manager:
       type: joint_state_broadcaster/JointStateBroadcaster
       joints:
         # Left leg
+        - JL_hip_y
         - JL_hip_r
         - JL_hip_p
         - JL_knee
-        - JL_ankle_r
-        - JL_hip_y
         - JL_ankle_p
+        - JL_ankle_r
         # Right leg
-        - JR_hip_r
         - JR_hip_y
+        - JR_hip_r
         - JR_hip_p
         - JR_knee
-        - JR_ankle_r
         - JR_ankle_p
+        - JR_ankle_r
       interfaces:
         - position
         - velocity

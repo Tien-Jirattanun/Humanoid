@@ -23,9 +23,9 @@ double outer_kd = 0.2;
 double outer_u_max = 3.14;
 double outer_u_min = -3.14;
 
-double inner_kp = 5;
-double inner_ki = 0.05;
-double inner_kd = 0.2;
+double inner_kp = 0.5;
+double inner_ki = 0.1;
+double inner_kd = 0.0;
 double inner_u_max = 3.14;
 double inner_u_min = -3.14;
 
@@ -73,18 +73,19 @@ private:
 	{
 		auto velocity_message = std_msgs::msg::Float64MultiArray();
 
-        hanuman_velocity_command_[0] = JL_hip_r.CascadeControlFunction(hanuman_ref_position_[0], hanuman_ref_velocity_[0], hanuman_position_[0], hanuman_velocity_[0]);
-		hanuman_velocity_command_[1] = JL_hip_p.CascadeControlFunction(hanuman_ref_position_[1], hanuman_ref_velocity_[1], hanuman_position_[1], hanuman_velocity_[1]);
-		hanuman_velocity_command_[2] = JL_knee.CascadeControlFunction(hanuman_ref_position_[2], hanuman_ref_velocity_[2], hanuman_position_[2], hanuman_velocity_[2]);
-		hanuman_velocity_command_[3] = JL_ankle_r.CascadeControlFunction(hanuman_ref_position_[3], hanuman_ref_velocity_[3], hanuman_position_[3], hanuman_velocity_[3]);
-		hanuman_velocity_command_[4] = JL_hip_y.CascadeControlFunction(hanuman_ref_position_[4], hanuman_ref_velocity_[4], hanuman_position_[4], hanuman_velocity_[4]);
-		hanuman_velocity_command_[5] = JL_ankle_p.CascadeControlFunction(hanuman_ref_position_[5], hanuman_ref_velocity_[5], hanuman_position_[5], hanuman_velocity_[5]);
-		hanuman_velocity_command_[6] = JR_hip_r.CascadeControlFunction(hanuman_ref_position_[6], hanuman_ref_velocity_[6], hanuman_position_[6], hanuman_velocity_[6]);
-		hanuman_velocity_command_[7] = JR_hip_y.CascadeControlFunction(hanuman_ref_position_[7], hanuman_ref_velocity_[7], hanuman_position_[7], hanuman_velocity_[7]);
+        hanuman_velocity_command_[0] = JL_hip_y.CascadeControlFunction(hanuman_ref_position_[0], hanuman_ref_velocity_[0], hanuman_position_[0], hanuman_velocity_[0]);
+		hanuman_velocity_command_[1] = JL_hip_r.CascadeControlFunction(hanuman_ref_position_[1], hanuman_ref_velocity_[1], hanuman_position_[1], hanuman_velocity_[1]);
+		hanuman_velocity_command_[2] = JL_hip_p.CascadeControlFunction(hanuman_ref_position_[2], hanuman_ref_velocity_[2], hanuman_position_[2], hanuman_velocity_[2]);
+		hanuman_velocity_command_[3] = JL_knee.CascadeControlFunction(hanuman_ref_position_[3], hanuman_ref_velocity_[3], hanuman_position_[3], hanuman_velocity_[3]);
+		hanuman_velocity_command_[4] = JL_ankle_p.CascadeControlFunction(hanuman_ref_position_[4], hanuman_ref_velocity_[4], hanuman_position_[4], hanuman_velocity_[4]);
+		hanuman_velocity_command_[5] = JL_ankle_r.CascadeControlFunction(hanuman_ref_position_[5], hanuman_ref_velocity_[5], hanuman_position_[5], hanuman_velocity_[5]);
+
+		hanuman_velocity_command_[6] = JR_hip_y.CascadeControlFunction(hanuman_ref_position_[6], hanuman_ref_velocity_[6], hanuman_position_[6], hanuman_velocity_[6]);
+		hanuman_velocity_command_[7] = JR_hip_r.CascadeControlFunction(hanuman_ref_position_[7], hanuman_ref_velocity_[7], hanuman_position_[7], hanuman_velocity_[7]);
 		hanuman_velocity_command_[8] = JR_hip_p.CascadeControlFunction(hanuman_ref_position_[8], hanuman_ref_velocity_[8], hanuman_position_[8], hanuman_velocity_[8]);
 		hanuman_velocity_command_[9] = JR_knee.CascadeControlFunction(hanuman_ref_position_[9], hanuman_ref_velocity_[9], hanuman_position_[9], hanuman_velocity_[9]);
-		hanuman_velocity_command_[10] = JR_ankle_r.CascadeControlFunction(hanuman_ref_position_[10], hanuman_ref_velocity_[10], hanuman_position_[10], hanuman_velocity_[10]);
-		hanuman_velocity_command_[11] = JR_ankle_p.CascadeControlFunction(hanuman_ref_position_[11], hanuman_ref_velocity_[11], hanuman_position_[11], hanuman_velocity_[11]);
+		hanuman_velocity_command_[10] = JR_ankle_p.CascadeControlFunction(hanuman_ref_position_[10], hanuman_ref_velocity_[10], hanuman_position_[10], hanuman_velocity_[10]);
+		hanuman_velocity_command_[11] = JR_ankle_r.CascadeControlFunction(hanuman_ref_position_[11], hanuman_ref_velocity_[11], hanuman_position_[11], hanuman_velocity_[11]);
        
 		velocity_message.data = hanuman_velocity_command_;
 		velocity_command_publisher_->publish(velocity_message);

@@ -31,6 +31,7 @@ endif()
 include_directories(
   include
   include/hanuman_control
+  include/trajectory
 )
 
 # add executable

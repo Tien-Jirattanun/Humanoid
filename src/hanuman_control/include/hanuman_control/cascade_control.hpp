@@ -12,12 +12,14 @@ public:
           inner_controller_(inner_kp, inner_ki, inner_kd, inner_u_max, inner_u_min)
     {}
 
-    // Keeping original function name and parameters
     double CascadeControlFunction(double ref_position, double ref_velocity, double current_position, double current_velocity);
 
 private:
-    PIDControl outer_controller_;  // Position controller (outputs velocity reference)
-    PIDControl inner_controller_;  // Velocity controller (outputs actual control signal)
+    PIDControl outer_controller_;  // Position controller 
+    PIDControl inner_controller_;  // Velocity controller 
+
+    double prev_outer = 0.0;
+    int iteration_ = 0;
 };
 
 #endif
