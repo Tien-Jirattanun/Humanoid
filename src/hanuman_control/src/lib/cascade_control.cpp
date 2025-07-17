@@ -9,7 +9,7 @@ double CascadeControl::CascadeControlFunction(double ref_position, double ref_ve
     {
         outer_loop = prev_outer;
     }
-
+    // double inner_loop = inner_controller_.PIDControlFunction(outer_loop, current_velocity);
     double inner_loop = inner_controller_.PIDControlFunction(outer_loop + ref_velocity, current_velocity);
 
     prev_outer = outer_loop;

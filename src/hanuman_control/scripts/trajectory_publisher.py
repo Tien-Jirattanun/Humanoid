@@ -242,6 +242,8 @@ class TrajectoryPublisher(Node):
         print("kps :\n", kps)
         print("kds :\n", kds)
         
+        self.UpdateDesirejointStates()
+        
         pos_msg.data = np.concatenate((self.L_leg_q ,self.R_leg_q)).tolist()
         vel_msg.data = np.concatenate((self.L_leg_qd ,self.R_leg_qd)).tolist()
         

@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <iostream>
 
 // ros include
 #include "rclcpp/rclcpp.hpp"
@@ -66,25 +67,25 @@ public:
         ref_velocity_subscriber_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
             "/ref_velocity", 10, std::bind(&VelocityPublisher::ref_velocity_callback, this, _1));
 
-		timer_ = this->create_wall_timer(10ms, std::bind(&VelocityPublisher::timer_callback, this));
+		timer_ = this->create_wall_timer(1ms, std::bind(&VelocityPublisher::timer_callback, this));
 	}
 private:
 	void timer_callback()
 	{
 		auto velocity_message = std_msgs::msg::Float64MultiArray();
 
-        hanuman_velocity_command_[0] = JL_hip_y.CascadeControlFunction(hanuman_ref_position_[0], hanuman_ref_velocity_[0], hanuman_position_[0], hanuman_velocity_[0]);
-		hanuman_velocity_command_[1] = JL_hip_r.CascadeControlFunction(hanuman_ref_position_[1], hanuman_ref_velocity_[1], hanuman_position_[1], hanuman_velocity_[1]);
-		hanuman_velocity_command_[2] = JL_hip_p.CascadeControlFunction(hanuman_ref_position_[2], hanuman_ref_velocity_[2], hanuman_position_[2], hanuman_velocity_[2]);
-		hanuman_velocity_command_[3] = JL_knee.CascadeControlFunction(hanuman_ref_position_[3], hanuman_ref_velocity_[3], hanuman_position_[3], hanuman_velocity_[3]);
+        hanuman_velocity_command_[0] = JL_hip_y.CascadeControlFunction(hanuman_ref_position_[0], hanuman_ref_velocity_[0], hanuman_position_[3], hanuman_velocity_[3]);
+		hanuman_velocity_command_[1] = JL_hip_r.CascadeControlFunction(hanuman_ref_position_[1], hanuman_ref_velocity_[1], hanuman_position_[0], hanuman_velocity_[0]);
+		hanuman_velocity_command_[2] = JL_hip_p.CascadeControlFunction(hanuman_ref_position_[2], hanuman_ref_velocity_[2], hanuman_position_[1], hanuman_velocity_[1]);
+		hanuman_velocity_command_[3] = JL_knee.CascadeControlFunction(hanuman_ref_position_[3], hanuman_ref_velocity_[3], hanuman_position_[2], hanuman_velocity_[2]);
 		hanuman_velocity_command_[4] = JL_ankle_p.CascadeControlFunction(hanuman_ref_position_[4], hanuman_ref_velocity_[4], hanuman_position_[4], hanuman_velocity_[4]);
 		hanuman_velocity_command_[5] = JL_ankle_r.CascadeControlFunction(hanuman_ref_position_[5], hanuman_ref_velocity_[5], hanuman_position_[5], hanuman_velocity_[5]);
 
-		hanuman_velocity_command_[6] = JR_hip_y.CascadeControlFunction(hanuman_ref_position_[6], hanuman_ref_velocity_[6], hanuman_position_[6], hanuman_velocity_[6]);
-		hanuman_velocity_command_[7] = JR_hip_r.CascadeControlFunction(hanuman_ref_position_[7], hanuman_ref_velocity_[7], hanuman_position_[7], hanuman_velocity_[7]);
+		hanuman_velocity_command_[6] = JR_hip_y.CascadeControlFunction(hanuman_ref_position_[6], hanuman_ref_velocity_[6], hanuman_position_[7], hanuman_velocity_[7]);
+		hanuman_velocity_command_[7] = JR_hip_r.CascadeControlFunction(hanuman_ref_position_[7], hanuman_ref_velocity_[7], hanuman_position_[6], hanuman_velocity_[6]);
 		hanuman_velocity_command_[8] = JR_hip_p.CascadeControlFunction(hanuman_ref_position_[8], hanuman_ref_velocity_[8], hanuman_position_[8], hanuman_velocity_[8]);
-		hanuman_velocity_command_[9] = JR_knee.CascadeControlFunction(hanuman_ref_position_[9], hanuman_ref_velocity_[9], hanuman_position_[9], hanuman_velocity_[9]);
-		hanuman_velocity_command_[10] = JR_ankle_p.CascadeControlFunction(hanuman_ref_position_[10], hanuman_ref_velocity_[10], hanuman_position_[10], hanuman_velocity_[10]);
+		hanuman_velocity_command_[9] = JR_knee.CascadeControlFunction(hanuman_ref_position_[9], hanuman_ref_velocity_[9], hanuman_position_[10], hanuman_velocity_[10]);
+		hanuman_velocity_command_[10] = JR_ankle_p.CascadeControlFunction(hanuman_ref_position_[10], hanuman_ref_velocity_[10], hanuman_position_[9], hanuman_velocity_[9]);
 		hanuman_velocity_command_[11] = JR_ankle_r.CascadeControlFunction(hanuman_ref_position_[11], hanuman_ref_velocity_[11], hanuman_position_[11], hanuman_velocity_[11]);
        
 		velocity_message.data = hanuman_velocity_command_;
@@ -125,7 +126,7 @@ private:
 	// control variables
 	std::vector<double> hanuman_position_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	std::vector<double> hanuman_velocity_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-	std::vector<double> hanuman_ref_position_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	std::vector<double> hanuman_ref_position_ = {0.0, 0.0, 1.00870663, -1.96682050, 0.958113870, 0.0, 0.0, 0.0, 1.008706630, -1.96682050, 0.958113870, 0.0};
     std::vector<double> hanuman_ref_velocity_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	std::vector<double> hanuman_velocity_command_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 };

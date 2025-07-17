@@ -7,6 +7,14 @@
             <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
 
+        <joint name="JL_hip_y">
+            <command_interface name="velocity" />
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="velocity" />
+        </joint>
+
         <joint name="JL_hip_r">
             <command_interface name="velocity" />
             <state_interface name="position">
@@ -18,7 +26,7 @@
         <joint name="JL_hip_p">
             <command_interface name="velocity" />
             <state_interface name="position">
-                <param name="initial_value">0.0</param>
+                <param name="initial_value">1.00870663</param>
             </state_interface>
             <state_interface name="velocity" />
         </joint>
@@ -26,23 +34,7 @@
         <joint name="JL_knee">
             <command_interface name="velocity" />
             <state_interface name="position">
-                <param name="initial_value">0.0</param>
-            </state_interface>
-            <state_interface name="velocity" />
-        </joint>
-
-        <joint name="JL_ankle_r">
-            <command_interface name="velocity" />
-            <state_interface name="position">
-                <param name="initial_value">0.0</param>
-            </state_interface>
-            <state_interface name="velocity" />
-        </joint>
-
-        <joint name="JL_hip_y">
-            <command_interface name="velocity" />
-            <state_interface name="position">
-                <param name="initial_value">0.0</param>
+                <param name="initial_value">-1.9668205</param>
             </state_interface>
             <state_interface name="velocity" />
         </joint>
@@ -50,12 +42,12 @@
         <joint name="JL_ankle_p">
             <command_interface name="velocity" />
             <state_interface name="position">
-                <param name="initial_value">0.0</param>
+                <param name="initial_value">0.95811387</param>
             </state_interface>
             <state_interface name="velocity" />
         </joint>
 
-        <joint name="JR_hip_r">
+        <joint name="JL_ankle_r">
             <command_interface name="velocity" />
             <state_interface name="position">
                 <param name="initial_value">0.0</param>
@@ -71,8 +63,7 @@
             <state_interface name="velocity" />
         </joint>
 
-
-        <joint name="JR_hip_p">
+        <joint name="JR_hip_r">
             <command_interface name="velocity" />
             <state_interface name="position">
                 <param name="initial_value">0.0</param>
@@ -80,10 +71,26 @@
             <state_interface name="velocity" />
         </joint>
 
+        <joint name="JR_hip_p">
+            <command_interface name="velocity" />
+            <state_interface name="position">
+                <param name="initial_value">1.00870663</param>
+            </state_interface>
+            <state_interface name="velocity" />
+        </joint>
+
         <joint name="JR_knee">
             <command_interface name="velocity" />
             <state_interface name="position">
-                <param name="initial_value">0.0</param>
+                <param name="initial_value">-1.9668205</param>
+            </state_interface>
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="JR_ankle_p">
+            <command_interface name="velocity" />
+            <state_interface name="position">
+                <param name="initial_value">0.95811387</param>
             </state_interface>
             <state_interface name="velocity" />
         </joint>
@@ -96,13 +103,6 @@
             <state_interface name="velocity" />
         </joint>
 
-        <joint name="JR_ankle_p">
-            <command_interface name="velocity" />
-            <state_interface name="position">
-                <param name="initial_value">0.0</param>
-            </state_interface>
-            <state_interface name="velocity" />
-        </joint>
     </ros2_control>
 
     <gazebo>
