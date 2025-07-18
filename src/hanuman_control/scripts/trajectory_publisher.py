@@ -212,60 +212,60 @@ class TrajectoryPublisher(Node):
                 elif self.walk_command == 2:
                     self.operation_state = "hold_position"
 
-        q_desire = np.concatenate((np.array([self.L_leg_q]), np.array([self.R_leg_q])),axis=1)
-        qd_desire = np.concatenate((np.array([self.L_leg_qd]), np.array([self.R_leg_qd])),axis=1)
-        # motor_ids = [1,2,3,4,5,6,11,12,13,14,15,16]
-        if self.controller_enable:
-            for id in range(self.num_motors):
-                self.frictions_ff[id] = CalcStribeckFriction(omega=self.current_velocity[id] ,
-                                                             B=self.B[id],
-                                                             Tc=self.Tc[id],
-                                                             Ts=self.Ts[id],
-                                                             vs=self.vs[id])  
+                q_desire = np.concatenate((np.array([self.L_leg_q]), np.array([self.R_leg_q])),axis=1)
+                qd_desire = np.concatenate((np.array([self.L_leg_qd]), np.array([self.R_leg_qd])),axis=1)
+                # motor_ids = [1,2,3,4,5,6,11,12,13,14,15,16]
+                if self.controller_enable:
+                    for id in range(self.num_motors):
+                        self.frictions_ff[id] = CalcStribeckFriction(omega=self.current_velocity[id] ,
+                                                                    B=self.B[id],
+                                                                    Tc=self.Tc[id],
+                                                                    Ts=self.Ts[id],
+                                                                    vs=self.vs[id])  
+                        
+                        if self.current_velocity[id] == 0:  
+                            qd_error = qd_desire[0,id] - self.current_velocity[id]                                                                                                                                                                                      
+                            if qd_error > 0:
+                                self.frictions_ff[id] = self.Ts[id]
+                            elif qd_error < 0:
+                                self.frictions_ff[id] = -1.0*self.Ts[id]
+
+                    kps = [0.0, 0.0, 0.1, 0.0, 0.0, 0.0,   # L
+                        0.0, 0.0, 0.1, 0.0, 0.0, 0.0]   # R
+                    
+                    kds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  # L
+                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0]   # R
+                else:
+                    kps = np.zeros(12)
+                    kds = np.zeros(12)
+                    self.frictions_ff = np.zeros(self.num_motors)
+                print("kps :\n", kps)
+                print("kds :\n", kds)
                 
-                if self.current_velocity[id] == 0:  
-                    qd_error = qd_desire[0,id] - self.current_velocity[id]                                                                                                                                                                                      
-                    if qd_error > 0:
-                        self.frictions_ff[id] = self.Ts[id]
-                    elif qd_error < 0:
-                        self.frictions_ff[id] = -1.0*self.Ts[id]
+                self.UpdateDesirejointStates()
+                
+                pos_msg.data = np.concatenate((self.L_leg_q ,self.R_leg_q)).tolist()
+                vel_msg.data = np.concatenate((self.L_leg_qd ,self.R_leg_qd)).tolist()
+                
+                self.ref_position_publisher_.publish(pos_msg)
+                self.ref_velocity_publisher_.publish(vel_msg)
+                
+                # for id in range(len(motor_ids)):
+                #     motor = MotorControl()
+                #     motor.motor_id = motor_ids[id]
+                #     if motor_ids[id] == 1 or motor_ids[id] == 11:
+                #         motor.motor_serie = "XM430"
+                #     else:
+                #         motor.motor_serie = "XM540"
+                #     motor.control_mode = 0  
+                #     motor.set_point.position = q_desire[0,id]
+                #     motor.set_point.velocity = qd_desire[0,id]
+                #     motor.set_point.effort = self.frictions_ff[id]
+                #     motor.set_point.kp = kps[id]
+                #     motor.set_point.kd = kds[id]
+                #     msg.motor_controls.append(motor)
 
-            kps = [0.0, 0.0, 0.1, 0.0, 0.0, 0.0,   # L
-                   0.0, 0.0, 0.1, 0.0, 0.0, 0.0]   # R
-            
-            kds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  # L
-                   0.0, 0.0, 0.0, 0.0, 0.0, 0.0]   # R
-        else:
-            kps = np.zeros(12)
-            kds = np.zeros(12)
-            self.frictions_ff = np.zeros(self.num_motors)
-        print("kps :\n", kps)
-        print("kds :\n", kds)
-        
-        self.UpdateDesirejointStates()
-        
-        pos_msg.data = np.concatenate((self.L_leg_q ,self.R_leg_q)).tolist()
-        vel_msg.data = np.concatenate((self.L_leg_qd ,self.R_leg_qd)).tolist()
-        
-        self.ref_position_publisher_.publish(pos_msg)
-        self.ref_velocity_publisher_.publish(vel_msg)
-        
-        # for id in range(len(motor_ids)):
-        #     motor = MotorControl()
-        #     motor.motor_id = motor_ids[id]
-        #     if motor_ids[id] == 1 or motor_ids[id] == 11:
-        #         motor.motor_serie = "XM430"
-        #     else:
-        #         motor.motor_serie = "XM540"
-        #     motor.control_mode = 0  
-        #     motor.set_point.position = q_desire[0,id]
-        #     motor.set_point.velocity = qd_desire[0,id]
-        #     motor.set_point.effort = self.frictions_ff[id]
-        #     motor.set_point.kp = kps[id]
-        #     motor.set_point.kd = kds[id]
-        #     msg.motor_controls.append(motor)
-
-        # self.publisher_.publish(msg)
+                # self.publisher_.publish(msg)
     
     def walk_command_callback(self, msg:Int16):
         self.walk_command = msg.data
@@ -275,21 +275,22 @@ class TrajectoryPublisher(Node):
             case WalkStates.stand:
                 pass
             case WalkStates.init:
-                if self.ind <= self.q_init_L.shape[1] - 200:
+                if self.ind <= self.q_init_L.shape[1]-1:
                     self.L_leg_q = self.q_init_L[:,self.ind]
                     self.R_leg_q = self.q_init_R[:,self.ind]
 
                     self.L_leg_qd = self.qd_init_L[:,self.ind]
                     self.R_leg_qd = self.qd_init_R[:,self.ind]
 
-                    self.ind += 1
+                    
                 else:
                     self.L_leg_qd = np.zeros(6)
                     self.R_leg_qd = np.zeros(6)                
-                    # self.walk_state = WalkStates.walk
-                    # self.ind = 0
+                    self.walk_state = WalkStates.walk
+                    self.ind = 0
+                self.ind += 1
             case WalkStates.walk:
-                if self.ind > self.sw_leg_q.shape[1]:
+                if self.ind > self.sw_leg_q.shape[1]-1:
                     self.ind = 0
                     for i in [1,5]:
                         self.st_leg_q[i,:] = self.st_leg_q[i,:]*-1.0

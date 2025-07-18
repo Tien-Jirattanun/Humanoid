@@ -44,6 +44,7 @@ joint_state_broadcaster:
       - JR_ankle_p
       - JR_ankle_r
     interfaces:
+      - effort
       - position
       - velocity
 
@@ -68,5 +69,6 @@ velocity_controller:
     command_interfaces:
       - velocity
     state_interfaces:
+      - effort
       - velocity 
       - position

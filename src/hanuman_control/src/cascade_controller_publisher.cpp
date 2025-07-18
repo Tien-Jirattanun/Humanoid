@@ -27,8 +27,8 @@ double outer_u_min = -3.14;
 double inner_kp = 0.5;
 double inner_ki = 0.1;
 double inner_kd = 0.0;
-double inner_u_max = 3.14;
-double inner_u_min = -3.14;
+double inner_u_max = 2.19;
+double inner_u_min = -2.19;
 
 CascadeControl JL_hip_r(outer_kp, outer_ki, outer_kd, outer_u_max, outer_u_min, inner_kp, inner_ki, inner_kd, inner_u_max, inner_u_min);
 CascadeControl JL_hip_p(outer_kp, outer_ki, outer_kd, outer_u_max, outer_u_min, inner_kp, inner_ki, inner_kd, inner_u_max, inner_u_min);

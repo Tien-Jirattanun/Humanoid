@@ -9,6 +9,7 @@
 
         <joint name="JL_hip_y">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">0.0</param>
             </state_interface>
@@ -17,6 +18,7 @@
 
         <joint name="JL_hip_r">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">0.0</param>
             </state_interface>
@@ -25,6 +27,7 @@
 
         <joint name="JL_hip_p">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">1.00870663</param>
             </state_interface>
@@ -33,6 +36,7 @@
 
         <joint name="JL_knee">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">-1.9668205</param>
             </state_interface>
@@ -41,6 +45,7 @@
 
         <joint name="JL_ankle_p">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">0.95811387</param>
             </state_interface>
@@ -49,6 +54,7 @@
 
         <joint name="JL_ankle_r">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">0.0</param>
             </state_interface>
@@ -56,15 +62,17 @@
         </joint>
 
         <joint name="JR_hip_y">
+            <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">0.0</param>
             </state_interface>
-            <command_interface name="velocity" />
             <state_interface name="velocity" />
         </joint>
 
         <joint name="JR_hip_r">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">0.0</param>
             </state_interface>
@@ -73,6 +81,7 @@
 
         <joint name="JR_hip_p">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">1.00870663</param>
             </state_interface>
@@ -81,6 +90,7 @@
 
         <joint name="JR_knee">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">-1.9668205</param>
             </state_interface>
@@ -89,6 +99,7 @@
 
         <joint name="JR_ankle_p">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">0.95811387</param>
             </state_interface>
@@ -97,6 +108,7 @@
 
         <joint name="JR_ankle_r">
             <command_interface name="velocity" />
+            <state_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">0.0</param>
             </state_interface>
