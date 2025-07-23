@@ -4,10 +4,14 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <iostream>
+
 
 // ros include
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/float64_multi_array.hpp"
+#include "std_msgs/msg/int16_multi_array.hpp"
+#include "std_msgs/msg/int16.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 
 using std::placeholders::_1;
@@ -17,11 +21,11 @@ using std::placeholders::_1;
 
 using namespace std::chrono_literals;
 
-double kp = 5;
-double ki = 0.05;
-double kd = 0.2;
-double u_max = 3.14;
-double u_min = -3.14;
+double kp = 3.0;
+double ki = 0.0;
+double kd = 2.5;
+double u_max = 12.0;
+double u_min = -12.0;
 
 PIDControl JL_hip_r(kp, ki, kd, u_max, u_min);
 PIDControl JL_hip_p(kp, ki, kd, u_max, u_min);
@@ -43,8 +47,11 @@ public:
 		: Node("velocity_publisher")
 	{
 
+		// // velocity sim commands publisher
+		// velocity_sim_publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("/velocity_controller/commands", 10);
+
 		// velocity commands publisher
-		velocity_publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("/velocity_controller/commands", 10);
+		velocity_real_publisher_ = this->create_publisher<std_msgs::msg::Int16MultiArray>("/group_goal_velocity", 10);
 
 		// robot joint position subscribers
 		position_subscriber_ = this->create_subscription<sensor_msgs::msg::JointState>(
@@ -54,30 +61,56 @@ public:
 		ref_position_subscriber_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
 			"/ref_position", 10, std::bind(&VelocityPublisher::ref_position_callback, this, _1));
 
+		// enable moving
+		enable_subscriber_ = this->create_subscription<std_msgs::msg::Int16>(
+			"/enable", 10, std::bind(&VelocityPublisher::enable_callback, this, _1));
+
 		timer_ = this->create_wall_timer(10ms, std::bind(&VelocityPublisher::timer_callback, this));
 	}
 
 private:
 	void timer_callback()
 	{
-		auto velocity_message = std_msgs::msg::Float64MultiArray();
+		auto velocity_message = std_msgs::msg::Int16MultiArray();
 
-		hanuman_velocity_[0] = JL_hip_y.PIDControlFunction(hanuman_ref_position_[4], hanuman_position_[4]);
-		hanuman_velocity_[1] = JL_hip_r.PIDControlFunction(hanuman_ref_position_[0], hanuman_position_[0]);
-		hanuman_velocity_[2] = JL_hip_p.PIDControlFunction(hanuman_ref_position_[1], hanuman_position_[1]);
-		hanuman_velocity_[3] = JL_knee.PIDControlFunction(hanuman_ref_position_[2], hanuman_position_[2]);
-		hanuman_velocity_[4] = JL_ankle_p.PIDControlFunction(hanuman_ref_position_[5], hanuman_position_[5]);
-		hanuman_velocity_[5] = JL_ankle_r.PIDControlFunction(hanuman_ref_position_[3], hanuman_position_[3]);
+		hanuman_velocity_[0] = JL_hip_y.PIDControlFunction(hanuman_ref_position_[0], hanuman_position_[0]);
+		hanuman_velocity_[1] = JL_hip_r.PIDControlFunction(hanuman_ref_position_[1], hanuman_position_[1]);
+		hanuman_velocity_[2] = JL_hip_p.PIDControlFunction(hanuman_ref_position_[2], hanuman_position_[2]);
+		hanuman_velocity_[3] = JL_knee.PIDControlFunction(hanuman_ref_position_[3], hanuman_position_[3]);
+		hanuman_velocity_[4] = JL_ankle_p.PIDControlFunction(hanuman_ref_position_[4], hanuman_position_[4]);
+		hanuman_velocity_[5] = JL_ankle_r.PIDControlFunction(hanuman_ref_position_[5], hanuman_position_[5]);
 
-		hanuman_velocity_[6] = JR_hip_y.PIDControlFunction(hanuman_ref_position_[7], hanuman_position_[7]);
-		hanuman_velocity_[7] = JR_hip_r.PIDControlFunction(hanuman_ref_position_[6], hanuman_position_[6]);
+		hanuman_velocity_[6] = JR_hip_y.PIDControlFunction(hanuman_ref_position_[6], hanuman_position_[6]);
+		hanuman_velocity_[7] = JR_hip_r.PIDControlFunction(hanuman_ref_position_[7], hanuman_position_[7]);
 		hanuman_velocity_[8] = JR_hip_p.PIDControlFunction(hanuman_ref_position_[8], hanuman_position_[8]);
 		hanuman_velocity_[9] = JR_knee.PIDControlFunction(hanuman_ref_position_[9], hanuman_position_[9]);
-		hanuman_velocity_[10] = JR_ankle_p.PIDControlFunction(hanuman_ref_position_[11], hanuman_position_[11]);
-		hanuman_velocity_[11] = JR_ankle_r.PIDControlFunction(hanuman_ref_position_[10], hanuman_position_[10]);
+		hanuman_velocity_[10] = JR_ankle_p.PIDControlFunction(hanuman_ref_position_[10], hanuman_position_[10]);
+		hanuman_velocity_[11] = JR_ankle_r.PIDControlFunction(hanuman_ref_position_[11], hanuman_position_[11]);
 
-		velocity_message.data = hanuman_velocity_;
-		velocity_publisher_->publish(velocity_message);
+		if (enable_ == 0)
+		{
+			for (int i = 0; i < 12; i++)
+			{
+				hanuman_velocity_[i] = 0;
+			}
+		}
+
+		for (int i = 0; i < 12; i++)
+		{
+			std::cout << "hanuman[" << i << "]" << " : " << hanuman_velocity_[i] << "rad/s" << std::endl;
+			hanuman_velocity_command_[i] = static_cast<int16_t>((hanuman_velocity_[i] * 60 / (2 * M_PI)) / 0.229);
+		}
+		std::cout << "---------------------------------" << std::endl;
+
+
+		velocity_message.data = hanuman_velocity_command_;
+		velocity_real_publisher_->publish(velocity_message);
+		// velocity_sim_publisher_->publish(velocity_message);
+	}
+
+	void enable_callback(const std_msgs::msg::Int16::SharedPtr msg)
+	{
+		enable_ = msg->data;
 	}
 
 	// robot position callback
@@ -96,12 +129,17 @@ private:
 	rclcpp::TimerBase::SharedPtr timer_;
 	rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr position_subscriber_;
 	rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr ref_position_subscriber_;
-	rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr velocity_publisher_;
+	rclcpp::Subscription<std_msgs::msg::Int16>::SharedPtr enable_subscriber_;
+	// rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr velocity_sim_publisher_;
+	rclcpp::Publisher<std_msgs::msg::Int16MultiArray>::SharedPtr velocity_real_publisher_;
+	
 
 	// control variables
 	std::vector<double> hanuman_position_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	std::vector<double> hanuman_ref_position_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	std::vector<double> hanuman_velocity_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	std::vector<int16_t> hanuman_velocity_command_ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+	int enable_ = 1;
 };
 
 int main(int argc, char *argv[])

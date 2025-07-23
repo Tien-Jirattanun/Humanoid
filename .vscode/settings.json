@@ -1,11 +1,21 @@
 {
     "python.autoComplete.extraPaths": [
+        "/home/tien/Documents/GitHub/Humanoid/install/hanuman_control/local/lib/python3.10/dist-packages",
         "/home/tien/Documents/GitHub/Humanoid/install/hanuman04/local/lib/python3.10/dist-packages",
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_ros2_multi_motor_control/local/lib/python3.10/dist-packages",
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages",
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_sdk/local/lib/python3.10/dist-packages",
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_interfaces/local/lib/python3.10/dist-packages",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
     "python.analysis.extraPaths": [
+        "/home/tien/Documents/GitHub/Humanoid/install/hanuman_control/local/lib/python3.10/dist-packages",
         "/home/tien/Documents/GitHub/Humanoid/install/hanuman04/local/lib/python3.10/dist-packages",
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_ros2_multi_motor_control/local/lib/python3.10/dist-packages",
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages",
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_sdk/local/lib/python3.10/dist-packages",
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_interfaces/local/lib/python3.10/dist-packages",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],

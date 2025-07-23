@@ -10,6 +10,10 @@ public:
 
     double PIDControlFunction(double setpoint, double current_position);
 
+    void SetterParam(double kp, double ki, double kd);
+
+    void SetterZero();
+
 private:
     double kp_;        // Proportional gain
     double ki_;        // Integral gain

@@ -37,8 +37,8 @@ include_directories(
 # add executable
 add_executable(
   hanuman_control 
-  # src/single_loop_publisher.cpp
-  src/cascade_controller_publisher.cpp
+  src/single_loop_publisher.cpp
+  # src/cascade_controller_publisher.cpp
   src/lib/pid_control.cpp
   src/lib/cascade_control.cpp
 )

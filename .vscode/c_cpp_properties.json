@@ -6,7 +6,13 @@
         "limitSymbolsToIncludedHeaders": false
       },
       "includePath": [
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_sdk_custom_interfaces/include/**",
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_sdk/include/**",
+        "/home/tien/Documents/GitHub/Humanoid/install/dynamixel_interfaces/include/**",
         "/opt/ros/humble/include/**",
+        "/home/tien/Documents/GitHub/Humanoid/src/DynamixelSDK/ros/dynamixel_sdk/include/**",
+        "/home/tien/Documents/GitHub/Humanoid/src/DynamixelSDK/ros/dynamixel_sdk_examples/include/**",
+        "/home/tien/Documents/GitHub/Humanoid/src/dynamixel_ros2_multi_motor_control/include/**",
         "/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/**",
         "/usr/include/**"
       ],

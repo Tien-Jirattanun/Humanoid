@@ -1,6 +1,7 @@
 #include "pid_control.hpp"
 
-double PIDControl::PIDControlFunction(double setpoint, double current_position) {
+double PIDControl::PIDControlFunction(double setpoint, double current_position) 
+{
     double error = setpoint - current_position;
 
     // PID velocity form
@@ -25,4 +26,18 @@ double PIDControl::PIDControlFunction(double setpoint, double current_position) 
     u_prev_ = u_new;
 
     return u_new;
+}
+
+void PIDControl::SetterZero()
+{
+    kp_ = 0.0;
+    ki_ = 0.0;
+    kd_ = 0.0;
+}
+
+void PIDControl::SetterParam(double kp, double ki, double kd)
+{
+    kp_ = kp;
+    ki_ = ki;
+    kd_ = kd;
 }

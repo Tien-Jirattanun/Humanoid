@@ -7,15 +7,15 @@
   <!-- <xacro:include filename="$(find ${description_package})/urdf/hanuman.ros2_control.xacro" /> -->
   <xacro:include filename="$(find ${description_package})/urdf/hanuman.ros2_gazebo.xacro" />
 
-  <!-- <link name="world"/> -->
+  <link name="world"/>
 
   <xacro:robot_link link_name="torso" collision_enable="true" />
   <xacro:humanoid parent="torso" />
 
-  <!-- <joint name="base_to_torso" type="fixed">
-    <parent link="base_link"/>
+  <joint name="base_to_torso" type="fixed">
+    <parent link="world"/>
     <child link="torso"/>
-  </joint> -->
+  </joint>
 
   <!-- <xacro:humanoid_ros2_control name="humanoid_ros2_control"/> -->
 </robot>

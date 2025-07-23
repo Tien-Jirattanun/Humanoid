@@ -1,6 +1,6 @@
 JL_ankle_p:
   child: L_ankle
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: 0 0 0.0066853
   parent: L_leg
@@ -10,7 +10,7 @@ JL_ankle_p:
   velocity: 2.19
 JL_ankle_r:
   child: L_foot
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: -1.5708 0 0
   parent: L_ankle
@@ -20,7 +20,7 @@ JL_ankle_r:
   velocity: 2.19
 JL_hip_p:
   child: L_thigh
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: -1.5708 0 0
   parent: L_hip
@@ -30,7 +30,7 @@ JL_hip_p:
   velocity: 2.19
 JL_hip_r:
   child: L_hip
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: 0 -1.5708 0
   parent: L_hip_connector
@@ -40,7 +40,7 @@ JL_hip_r:
   velocity: 2.19
 JL_hip_y:
   child: L_hip_connector
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: 3.1416 0 0
   parent: torso
@@ -50,7 +50,7 @@ JL_hip_y:
   velocity: 2.19
 JL_knee:
   child: L_leg
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: 0 0 0
   parent: L_thigh
@@ -60,7 +60,7 @@ JL_knee:
   velocity: 2.19
 JR_ankle_p:
   child: R_ankle
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: 0 0 0.0066853
   parent: R_leg
@@ -70,7 +70,7 @@ JR_ankle_p:
   velocity: 2.19
 JR_ankle_r:
   child: R_foot
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: -1.5708 0 0
   parent: R_ankle
@@ -80,7 +80,7 @@ JR_ankle_r:
   velocity: 2.19
 JR_hip_p:
   child: R_thigh
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: -1.5708 0 0
   parent: R_hip
@@ -90,7 +90,7 @@ JR_hip_p:
   velocity: 2.19
 JR_hip_r:
   child: R_hip
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: 0 -1.5708 0
   parent: R_hip_connector
@@ -100,7 +100,7 @@ JR_hip_r:
   velocity: 2.19
 JR_hip_y:
   child: R_hip_connector
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: -3.1416 0 0
   parent: torso
@@ -110,7 +110,7 @@ JR_hip_y:
   velocity: 2.19
 JR_knee:
   child: R_leg
-  effor: 3.0
+  effort: 3.0
   lower: -3.14152
   orientation: 0 0 0
   parent: R_thigh

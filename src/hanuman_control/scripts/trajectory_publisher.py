@@ -2,8 +2,10 @@
 
 import rclpy
 from rclpy.node import Node
-# from cascade_controller_interfaces.msg import MotorControl, MotorControlGroup, SetPoint
-from std_msgs.msg import Header, Int16, Float64MultiArray 
+from std_msgs.msg import Header, Int16
+from std_msgs.msg import Float64MultiArray
+from sensor_msgs.msg import JointState
+from pydrake.trajectories import PiecewisePolynomial
 import math
 import numpy as np
 from enum import Enum
@@ -18,23 +20,20 @@ class WalkStates(Enum):
 
 class TrajectoryPublisher(Node):
     def __init__(self):
-        super().__init__('trajectory_publisher')
+        super().__init__('motor_control_group_publisher')
+        self.get_logger().info("Motor Control Group Publisher started")
         self.timer_period = 0.02  
         self.timer = self.create_timer(self.timer_period, self.timer_callback)
         self.start_time = self.get_clock().now().nanoseconds * 1e-9
         self.LoadDatas(file_name="step10cmV4_2")
         self.DefineVariables()
-
-        # self.publisher_ = self.create_publisher(MotorControlGroup,
-        #                                         'mit_mode_control', 10)
-
-        self.walk_command_sub = self.create_subscription(
+        
+        self.enable_publisher_ = self.create_publisher(
             Int16,
-            '/walk_command',
-            self.walk_command_callback,
+            '/enable',
             10
         )
-        
+
         self.ref_position_publisher_ = self.create_publisher(
             Float64MultiArray,
             '/ref_position',
@@ -47,11 +46,23 @@ class TrajectoryPublisher(Node):
             10
         )
 
-        
+        self.walk_command_sub = self.create_subscription(
+            Int16,
+            '/walk_command',
+            self.walk_command_callback,
+            10
+        )
+
+        self.joint_state_sub = self.create_subscription(
+            JointState,
+            '/joint_states',
+            self.joint_state_callback,
+            10
+        )
 
     def LoadDatas(self, file_name):
         self.loaded_q_data = np.load(
-            f'/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/trajectory/q_data_{file_name}.npz') 
+            f'/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/trajectory/q_data_{file_name}.npz')
         self.loaded_qd_data = np.load(
             f'/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/trajectory/qd_data_{file_name}.npz')
         self.loaded_init_data = np.load(
@@ -76,8 +87,6 @@ class TrajectoryPublisher(Node):
         self.current_effort     = [0.0] * self.num_motors
 
         self.ind = 0
-        # use this var
-        # left concar right up-down
         self.L_leg_q  = self.q_init_L[:,self.ind]
         self.R_leg_q  = self.q_init_R[:,self.ind]
         self.L_leg_qd = self.qd_init_L[:,self.ind]
@@ -105,16 +114,25 @@ class TrajectoryPublisher(Node):
         self.vs = [0.001, 0.001, 0.01, 0.001, 0.0001, 0.001,  # L
                    0.001, 0.001, 0.01, 0.001, 0.0001, 0.001]  # R
         self.frictions_ff = np.zeros(self.num_motors)
+    def joint_state_callback(self, msg: JointState):
+        for i, joint_name in enumerate(msg.name):
+            if i < self.num_motors:
+                self.current_position[i] = msg.position[i]
+                self.current_velocity[i] = msg.velocity[i]
+                self.current_effort[i] = msg.effort[i]
 
     def timer_callback(self):
         current_time = self.get_clock().now().nanoseconds * 1e-9
-        # msg = MotorControlGroup()
-        # msg.header.stamp = self.get_clock().now().to_msg()
-        # msg.header.frame_id = ""
         
         pos_msg = Float64MultiArray()
         vel_msg = Float64MultiArray() 
-         
+        
+        enable_msg = Int16()
+        
+        enable_msg.data = 1
+        
+        # msg.header.stamp = self.get_clock().now().to_msg()
+        # msg.header.frame_id = "" 
         print("operation state : ",self.operation_state)
         print("walk_command    : ",self.walk_command)
         print("-"*50)
@@ -147,61 +165,64 @@ class TrajectoryPublisher(Node):
                 elif self.walk_command == 2:
                     self.operation_state = "hold_position"
 
-            # case "home":
-            #     match self.home_state:
-            #         case "init_trajectories":
-            #             self.controller_enable = False
-            #             self.ind = 0
-            #             self.trajectory_time = 0.0
-            #             q_L_f  = self.q_init_L[:,self.ind]
-            #             q_R_f   = self.q_init_R[:,self.ind]
-            #             qd_L_f  = self.qd_init_L[:,self.ind]
-            #             qd_R_f  = self.qd_init_R[:,self.ind]
-            #             q_0 = np.array(self.current_position)
-            #             P_L = np.array([q_0[0:6],
-            #                             q_L_f]).T
-            #             V_L = np.array([np.zeros(6),
-            #                             np.zeros(6),]).T
-            #             self.traj_L = InitCubicTrajectories(P=P_L,
-            #                                            V=V_L,
-            #                                            Times=[0,self.home_interval],
-            #                                            n=6)
-            #             P_R = np.array([q_0[6:12],
-            #                             q_R_f]).T
-            #             V_R = np.array([np.zeros(6),
-            #                             np.zeros(6),]).T
-            #             self.traj_R = InitCubicTrajectories(P=P_R,
-            #                                            V=V_R,
-            #                                            Times=[0,self.home_interval],
-            #                                            n=6)
-            #             self.home_state = "evaluate_trajectories"
-            #         case "evaluate_trajectories":
-            #             self.controller_enable = True
-            #             if self.trajectory_time <= self.home_interval:
-            #                 for i in range(len(self.traj_L)):
-            #                     self.L_leg_q[i]  = self.traj_L[i].value(self.trajectory_time)[0][0]
-            #                     self.R_leg_q[i]  = self.traj_R[i].value(self.trajectory_time)[0][0]
-            #                     self.L_leg_qd[i] = self.traj_L[i].EvalDerivative(self.trajectory_time, 1)[0][0]
-            #                     self.R_leg_qd[i] = self.traj_R[i].EvalDerivative(self.trajectory_time, 1)[0][0]
-            #                 self.trajectory_time += self.timer_period
-            #             else: 
-            #                 self.home_state = "done"
-            #         case "done":
-            #             self.operation_state = "hold_position"
-            #             self.controller_enable = True
-            #             pass
+            case "home":
+                match self.home_state:
+                    case "init_trajectories":
+                        self.controller_enable = False
+                        self.ind = 0
+                        self.trajectory_time = 0.0
+                        q_L_f  = self.q_init_L[:,self.ind]
+                        q_R_f   = self.q_init_R[:,self.ind]
+                        qd_L_f  = self.qd_init_L[:,self.ind]
+                        qd_R_f  = self.qd_init_R[:,self.ind]
+                        q_0 = np.array(self.current_position)
+                        P_L = np.array([q_0[0:6],
+                                        q_L_f]).T
+                        V_L = np.array([np.zeros(6),
+                                        np.zeros(6),]).T
+                        self.traj_L = InitCubicTrajectories(P=P_L,
+                                                       V=V_L,
+                                                       Times=[0,self.home_interval],
+                                                       n=6)
+                        P_R = np.array([q_0[6:12],
+                                        q_R_f]).T
+                        V_R = np.array([np.zeros(6),
+                                        np.zeros(6),]).T
+                        self.traj_R = InitCubicTrajectories(P=P_R,
+                                                       V=V_R,
+                                                       Times=[0,self.home_interval],
+                                                       n=6)
+                        self.home_state = "evaluate_trajectories"
+                    case "evaluate_trajectories":
+                        self.controller_enable = True
+                        if self.trajectory_time <= self.home_interval:
+                            for i in range(len(self.traj_L)):
+                                self.L_leg_q[i]  = self.traj_L[i].value(self.trajectory_time)[0][0]
+                                self.R_leg_q[i]  = self.traj_R[i].value(self.trajectory_time)[0][0]
+                                self.L_leg_qd[i] = self.traj_L[i].EvalDerivative(self.trajectory_time, 1)[0][0]
+                                self.R_leg_qd[i] = self.traj_R[i].EvalDerivative(self.trajectory_time, 1)[0][0]
+                            self.trajectory_time += self.timer_period
+                        else: 
+                            self.home_state = "done"
+                    case "done":
+                        self.operation_state = "hold_position"
+                        self.controller_enable = True
+                        
+                        pass
                 
-            #     if self.walk_command == -1:
-            #         self.operation_state = "disable_controller"
-            #     elif self.walk_command == 0:
-            #         self.operation_state = "home"
-            #     elif self.walk_command == 1:
-            #         self.operation_state = "task_execution"
-            #     elif self.walk_command == 2:
-            #         self.operation_state = "hold_position"
+                if self.walk_command == -1:
+                    self.operation_state = "disable_controller"
+                elif self.walk_command == 0:
+                    self.operation_state = "home"
+                elif self.walk_command == 1:
+                    self.operation_state = "task_execution"
+                elif self.walk_command == 2:
+                    self.operation_state = "hold_position"
 
             case "task_execution":
                 self.controller_enable = True
+                self.walk_state = WalkStates.init
+                self.UpdateDesirejointStates()
                 if self.walk_command == -1:
                     self.operation_state = "disable_controller"
                 elif self.walk_command == 0:
@@ -212,60 +233,62 @@ class TrajectoryPublisher(Node):
                 elif self.walk_command == 2:
                     self.operation_state = "hold_position"
 
-                q_desire = np.concatenate((np.array([self.L_leg_q]), np.array([self.R_leg_q])),axis=1)
-                qd_desire = np.concatenate((np.array([self.L_leg_qd]), np.array([self.R_leg_qd])),axis=1)
-                # motor_ids = [1,2,3,4,5,6,11,12,13,14,15,16]
-                if self.controller_enable:
-                    for id in range(self.num_motors):
-                        self.frictions_ff[id] = CalcStribeckFriction(omega=self.current_velocity[id] ,
-                                                                    B=self.B[id],
-                                                                    Tc=self.Tc[id],
-                                                                    Ts=self.Ts[id],
-                                                                    vs=self.vs[id])  
-                        
-                        if self.current_velocity[id] == 0:  
-                            qd_error = qd_desire[0,id] - self.current_velocity[id]                                                                                                                                                                                      
-                            if qd_error > 0:
-                                self.frictions_ff[id] = self.Ts[id]
-                            elif qd_error < 0:
-                                self.frictions_ff[id] = -1.0*self.Ts[id]
+        q_desire = np.concatenate((np.array([self.L_leg_q]), np.array([self.R_leg_q])),axis=1)
+        qd_desire = np.concatenate((np.array([self.L_leg_qd]), np.array([self.R_leg_qd])),axis=1)
+        motor_ids = [1,2,3,4,5,6,11,12,13,14,15,16]
+        if self.controller_enable:
+            for id in range(self.num_motors):
+                self.frictions_ff[id] = CalcStribeckFriction(omega=self.current_velocity[id] ,
+                                                             B=self.B[id],
+                                                             Tc=self.Tc[id],
+                                                             Ts=self.Ts[id],
+                                                             vs=self.vs[id])  
+                
+                if self.current_velocity[id] == 0:  
+                    qd_error = qd_desire[0,id] - self.current_velocity[id]                                                                                                                                                                                      
+                    if qd_error > 0:
+                        self.frictions_ff[id] = self.Ts[id]
+                    elif qd_error < 0:
+                        self.frictions_ff[id] = -1.0*self.Ts[id]
 
-                    kps = [0.0, 0.0, 0.1, 0.0, 0.0, 0.0,   # L
-                        0.0, 0.0, 0.1, 0.0, 0.0, 0.0]   # R
-                    
-                    kds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  # L
-                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0]   # R
-                else:
-                    kps = np.zeros(12)
-                    kds = np.zeros(12)
-                    self.frictions_ff = np.zeros(self.num_motors)
-                print("kps :\n", kps)
-                print("kds :\n", kds)
+            kps = [0.0, 0.0, 0.1, 0.0, 0.0, 0.0,   # L
+                   0.0, 0.0, 0.1, 0.0, 0.0, 0.0]   # R
+            
+            kds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  # L
+                   0.0, 0.0, 0.0, 0.0, 0.0, 0.0]   # R
+        else:
+            kps = np.zeros(12)
+            kds = np.zeros(12)
+            self.frictions_ff = np.zeros(self.num_motors)
+            enable_msg.data = 0
+        print("kps :\n", kps)
+        print("kds :\n", kds)
+        
+        # self.UpdateDesirejointStates()
                 
-                self.UpdateDesirejointStates()
+        pos_msg.data = np.concatenate((self.L_leg_q ,self.R_leg_q)).tolist()
+        vel_msg.data = np.concatenate((self.L_leg_qd ,self.R_leg_qd)).tolist()
                 
-                pos_msg.data = np.concatenate((self.L_leg_q ,self.R_leg_q)).tolist()
-                vel_msg.data = np.concatenate((self.L_leg_qd ,self.R_leg_qd)).tolist()
-                
-                self.ref_position_publisher_.publish(pos_msg)
-                self.ref_velocity_publisher_.publish(vel_msg)
-                
-                # for id in range(len(motor_ids)):
-                #     motor = MotorControl()
-                #     motor.motor_id = motor_ids[id]
-                #     if motor_ids[id] == 1 or motor_ids[id] == 11:
-                #         motor.motor_serie = "XM430"
-                #     else:
-                #         motor.motor_serie = "XM540"
-                #     motor.control_mode = 0  
-                #     motor.set_point.position = q_desire[0,id]
-                #     motor.set_point.velocity = qd_desire[0,id]
-                #     motor.set_point.effort = self.frictions_ff[id]
-                #     motor.set_point.kp = kps[id]
-                #     motor.set_point.kd = kds[id]
-                #     msg.motor_controls.append(motor)
-
-                # self.publisher_.publish(msg)
+        self.ref_position_publisher_.publish(pos_msg)
+        self.ref_velocity_publisher_.publish(vel_msg)
+        self.enable_publisher_.publish(enable_msg)
+        # publish motor control messages
+        
+        # for id in range(len(motor_ids)):
+        #     motor = MotorControl()
+        #     motor.motor_id = motor_ids[id]
+        #     if motor_ids[id] == 1 or motor_ids[id] == 11:
+        #         motor.motor_serie = "XM430"
+        #     else:
+        #         motor.motor_serie = "XM540"
+        #     motor.control_mode = 0  
+        #     motor.set_point.position = q_desire[0,id]
+        #     motor.set_point.velocity = qd_desire[0,id]
+        #     motor.set_point.effort = self.frictions_ff[id]
+        #     motor.set_point.kp = kps[id]
+        #     motor.set_point.kd = kds[id]
+        #     msg.motor_controls.append(motor)
+        # self.publisher_.publish(msg)
     
     def walk_command_callback(self, msg:Int16):
         self.walk_command = msg.data
@@ -275,22 +298,22 @@ class TrajectoryPublisher(Node):
             case WalkStates.stand:
                 pass
             case WalkStates.init:
-                if self.ind <= self.q_init_L.shape[1]-1:
+                if self.ind <= self.q_init_L.shape[1] - 1:
                     self.L_leg_q = self.q_init_L[:,self.ind]
                     self.R_leg_q = self.q_init_R[:,self.ind]
 
                     self.L_leg_qd = self.qd_init_L[:,self.ind]
                     self.R_leg_qd = self.qd_init_R[:,self.ind]
 
-                    
                 else:
                     self.L_leg_qd = np.zeros(6)
                     self.R_leg_qd = np.zeros(6)                
                     self.walk_state = WalkStates.walk
                     self.ind = 0
                 self.ind += 1
+                    
             case WalkStates.walk:
-                if self.ind > self.sw_leg_q.shape[1]-1:
+                if self.ind > self.sw_leg_q.shape[1] - 1:
                     self.ind = 0
                     for i in [1,5]:
                         self.st_leg_q[i,:] = self.st_leg_q[i,:]*-1.0
@@ -315,13 +338,13 @@ class TrajectoryPublisher(Node):
                     self.R_leg_qd = self.st_leg_qd[:,self.ind]                   
                 self.ind += 1
 
-# def InitCubicTrajectories(P, V, Times, n):
-#     trajs = []
-#     for i in range(n):
-#         trajs.append(PiecewisePolynomial.CubicHermite(np.array(Times), 
-#                                                       np.array([P[i,:]]), 
-#                                                       np.array([V[i,:]])))
-#     return trajs
+def InitCubicTrajectories(P, V, Times, n):
+    trajs = []
+    for i in range(n):
+        trajs.append(PiecewisePolynomial.CubicHermite(np.array(Times), 
+                                                      np.array([P[i,:]]), 
+                                                      np.array([V[i,:]])))
+    return trajs
 
 def CalcStribeckFriction(omega, B, Tc, Ts, vs):
     """
