@@ -21,11 +21,11 @@ using std::placeholders::_1;
 
 using namespace std::chrono_literals;
 
-double kp = 3.0;
+double kp = 5.0;
 double ki = 0.0;
-double kd = 2.5;
-double u_max = 12.0;
-double u_min = -12.0;
+double kd = 4.0;
+double u_max = 500.0;
+double u_min = -200.0;
 
 PIDControl JL_hip_r(kp, ki, kd, u_max, u_min);
 PIDControl JL_hip_p(kp, ki, kd, u_max, u_min);
@@ -51,7 +51,8 @@ public:
 		// velocity_sim_publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("/velocity_controller/commands", 10);
 
 		// velocity commands publisher
-		velocity_real_publisher_ = this->create_publisher<std_msgs::msg::Int16MultiArray>("/group_goal_velocity", 10);
+		velocity_real_publisher_ = this->create_publisher<std_msgs::msg::Int16MultiArray>(
+			"/group_goal_velocity", 10);
 
 		// robot joint position subscribers
 		position_subscriber_ = this->create_subscription<sensor_msgs::msg::JointState>(
@@ -60,6 +61,9 @@ public:
 		// desired position subscriber
 		ref_position_subscriber_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
 			"/ref_position", 10, std::bind(&VelocityPublisher::ref_position_callback, this, _1));
+		
+		ref_velocity_subscriber_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
+			"/ref_velocity", 10, std::bind(&VelocityPublisher::ref_velocity_callback, this, _1));
 
 		// enable moving
 		enable_subscriber_ = this->create_subscription<std_msgs::msg::Int16>(
@@ -87,6 +91,7 @@ private:
 		hanuman_velocity_[10] = JR_ankle_p.PIDControlFunction(hanuman_ref_position_[10], hanuman_position_[10]);
 		hanuman_velocity_[11] = JR_ankle_r.PIDControlFunction(hanuman_ref_position_[11], hanuman_position_[11]);
 
+		//enable moving
 		if (enable_ == 0)
 		{
 			for (int i = 0; i < 12; i++)
@@ -95,12 +100,19 @@ private:
 			}
 		}
 
+		//Feed forward
 		for (int i = 0; i < 12; i++)
 		{
-			std::cout << "hanuman[" << i << "]" << " : " << hanuman_velocity_[i] << "rad/s" << std::endl;
+			hanuman_velocity_[i] += hanuman_ref_velocity_[i] * 0.5; 
+		}
+
+		// logging
+		for (int i = 0; i < 12; i++)
+		{
+			// std::cout << "hanuman[" << i << "]" << " : " << hanuman_velocity_[i] << "rad/s" << std::endl;
 			hanuman_velocity_command_[i] = static_cast<int16_t>((hanuman_velocity_[i] * 60 / (2 * M_PI)) / 0.229);
 		}
-		std::cout << "---------------------------------" << std::endl;
+		// std::cout << "---------------------------------" << std::endl;
 
 
 		velocity_message.data = hanuman_velocity_command_;
@@ -125,10 +137,17 @@ private:
 		hanuman_ref_position_ = msg->data;
 	}
 
+	// reference position callback
+	void ref_velocity_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
+	{
+		hanuman_ref_velocity_ = msg->data;
+	}
+
 	// ros variables
 	rclcpp::TimerBase::SharedPtr timer_;
 	rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr position_subscriber_;
 	rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr ref_position_subscriber_;
+	rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr ref_velocity_subscriber_;
 	rclcpp::Subscription<std_msgs::msg::Int16>::SharedPtr enable_subscriber_;
 	// rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr velocity_sim_publisher_;
 	rclcpp::Publisher<std_msgs::msg::Int16MultiArray>::SharedPtr velocity_real_publisher_;
@@ -137,6 +156,7 @@ private:
 	// control variables
 	std::vector<double> hanuman_position_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	std::vector<double> hanuman_ref_position_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	std::vector<double> hanuman_ref_velocity_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	std::vector<double> hanuman_velocity_ = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	std::vector<int16_t> hanuman_velocity_command_ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
 	int enable_ = 1;

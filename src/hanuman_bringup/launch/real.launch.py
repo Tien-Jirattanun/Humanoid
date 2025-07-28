@@ -17,7 +17,7 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     description_package_name = "hanuman04"
-    
+
     # Controller configuration
     robot_controllers = PathJoinSubstitution(
         [
@@ -48,7 +48,7 @@ def generate_launch_description():
         ],
         output="screen"
     )
-    
+
     # Controller configuration
     robot_controllers = PathJoinSubstitution(
         [
@@ -57,11 +57,12 @@ def generate_launch_description():
             'controllers.yaml',
         ]
     )
-    
+
     joint_state_broadcaster = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_state_broadcaster", "--param-file", robot_controllers],
+        arguments=["joint_state_broadcaster",
+                   "--param-file", robot_controllers],
         parameters=[{'use_sim_time': True}]
     )
 
@@ -71,7 +72,6 @@ def generate_launch_description():
         arguments=["velocity_controller", "--param-file", robot_controllers],
         parameters=[{'use_sim_time': True}]
     )
-
 
     rviz2 = Node(
         package="rviz2", executable="rviz2",
@@ -99,9 +99,21 @@ def generate_launch_description():
         output="screen",
     )
 
+    trajectory_node = TimerAction(
+        period=10.0,  # 10-second delay
+        actions=[
+            Node(
+                package='hanuman_control',
+                executable='trajectory_publisher.py',
+                name="trajectory_publisher",
+                output="screen",
+            )
+        ]
+    )
+
     # Add actions to launch description
     ld.add_action(joint_state_publisher)
     ld.add_action(dynamixel_motor)
     ld.add_action(control_node)
-
+    ld.add_action(trajectory_node)
     return ld

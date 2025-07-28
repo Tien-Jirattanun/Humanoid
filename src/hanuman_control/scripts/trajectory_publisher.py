@@ -62,9 +62,11 @@ class TrajectoryPublisher(Node):
 
     def LoadDatas(self, file_name):
         self.loaded_q_data = np.load(
-            f'/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/trajectory/q_data_{file_name}.npz')
+            # f'/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/trajectory/q_data_{file_name}.npz')
+            f'/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/trajectory/q_data_step10cmV4_3.npz')
         self.loaded_qd_data = np.load(
-            f'/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/trajectory/qd_data_{file_name}.npz')
+            # f'/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/trajectory/qd_data_{file_name}.npz')
+            f'/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/trajectory/qd_data_step10cmV4_3.npz')
         self.loaded_init_data = np.load(
             f'/home/tien/Documents/GitHub/Humanoid/src/hanuman_control/include/trajectory/q_init_data_{file_name}.npz')
         self.q_init_L = self.loaded_init_data['arr_0']
@@ -162,6 +164,7 @@ class TrajectoryPublisher(Node):
                     self.home_state = "init_trajectories"
                 elif self.walk_command == 1:
                     self.operation_state = "task_execution"
+                    self.walk_state = WalkStates.init
                 elif self.walk_command == 2:
                     self.operation_state = "hold_position"
 
@@ -221,7 +224,7 @@ class TrajectoryPublisher(Node):
 
             case "task_execution":
                 self.controller_enable = True
-                self.walk_state = WalkStates.init
+                
                 self.UpdateDesirejointStates()
                 if self.walk_command == -1:
                     self.operation_state = "disable_controller"
@@ -294,6 +297,7 @@ class TrajectoryPublisher(Node):
         self.walk_command = msg.data
 
     def UpdateDesirejointStates(self):
+        print("walk_state   : ",self.walk_state)
         match self.walk_state:
             case WalkStates.stand:
                 pass
